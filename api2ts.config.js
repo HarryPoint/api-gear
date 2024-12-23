@@ -2,9 +2,7 @@ const path = require("path");
 const argv = require("yargs").argv;
 
 const platformMap = {
-  dev: "47.108.139.107",
-  uat: "47.108.135.148",
-  demo: "localhost",
+  dev: "https://sit-open-api.fms-sit.lylo.tech",
 };
 
 const serviceMap = {
@@ -12,7 +10,7 @@ const serviceMap = {
   // "plk-uaa-service": 18100,
   // "flow-service": 16500,
   // "todo-service": 16600,
-  "app-enterprise-web": 16400,
+  "app-enterprise-web": "/swagger/fms-service.swagger.json",
   // "message-notification-service": 17600,
 };
 
@@ -20,18 +18,22 @@ const apiMap = Object.keys(platformMap)
   .map((platform) => ({
     [platform]: Object.keys(serviceMap)
       .map((service) => ({
-        [service]: `http://${platformMap[platform]}:${serviceMap[service]}`,
+        [service]: `${platformMap[platform]}${serviceMap[service]}`,
       }))
       .reduce((prev, next) => ({ ...prev, ...next }), {}),
   }))
   .reduce((prev, next) => ({ ...prev, ...next }), {});
 
 module.exports = () => {
-  console.log("argv.platform: ", argv.platform);
+  console.log("argv.platform: ", argv.platform, apiMap.dev);
   return {
     output: path.resolve(__dirname, "./openapi"),
-    serviceMap: argv.platform === "dev" ? apiMap.dev : apiMap.demo,
+    serviceMap: apiMap.dev,
     translate: true,
     sort: true,
+    auth: {
+      username: "lumens",
+      password: "fmsservice",
+    },
   };
 };

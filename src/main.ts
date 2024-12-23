@@ -2,7 +2,7 @@ import axios from "axios";
 import _ from "lodash";
 import path from "path";
 import { Project } from "ts-morph";
-import { IConfig, setRunTimeConfig } from "./config";
+import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
 import { createJsonFile, main as createProject, createTsFile } from "./project";
 import { transform } from "./transform";
 
@@ -10,14 +10,15 @@ const fetchData = async (
   config: IConfig,
   project: Project,
   apiUri: string,
-  apiPath: string,
   prefix: string = "./"
 ) => {
   console.log("apiUri: ", apiUri);
   if (!apiUri) {
     throw new Error("apiUri not found");
   }
-  const { data: originData } = await axios.get(`${apiUri}${apiPath}`);
+  const { data: originData } = await axios.get(`${apiUri}`, {
+    auth: config.auth,
+  });
   const sortData = (data: any): any => {
     if (Array.isArray(data)) {
       return data.map(sortData);
@@ -37,8 +38,8 @@ const fetchData = async (
   const findOriginalRef = (pathItem: any): string[] => {
     let result: string[] = [];
     for (let key in pathItem) {
-      if (key === "originalRef") {
-        return [pathItem[key]];
+      if (key === "$ref") {
+        return [pathItem[key].replace("#/definitions/", "")];
       }
       if (_.isObject(pathItem[key])) {
         result = [...result, ...findOriginalRef(pathItem[key])];
@@ -63,6 +64,7 @@ const fetchData = async (
       return createDefinitions(nextDefine, pre);
     }, prevDefines);
   };
+
   const openJsonArr = _.toPairs(data.paths).map(([path, pathItem]) => {
     return [
       path,
@@ -93,20 +95,19 @@ const fetchData = async (
   }
 };
 
-export const main = async (config: IConfig) => {
-  setRunTimeConfig(config);
+export const main = async (org_config: IConfig) => {
+  setRunTimeConfig(org_config);
+  let config = getRunTimeConfig();
   const project = await createProject(config);
   if (config.transform || config.clearJsonFile) {
     return transform(config, project, config.output);
   }
   for (const key in config.serviceMap) {
     const apiUri = config.serviceMap[key as keyof typeof config.serviceMap];
-    const apiPath = config.apiPath;
     await fetchData(
       config,
       project,
       apiUri,
-      apiPath,
       config.serviceNameToPath ? key : "./"
     );
   }

@@ -12,6 +12,7 @@
     "src": "ts-node ./src/main.ts",
     "src:cli": "ts-node ./src/cli.ts --help",
     "src:cli1": "ts-node ./src/cli.ts --type=transform --target=./case --translate=true",
+    "src:cli2": "ts-node ./src/cli.ts --target=./case --translate=false",
     "src:platform": "ts-node ./src/main.ts --platform=dev",
     "src:json": "ts-node ./src/main.ts --json=true",
     "src:clear": "ts-node ./src/main.ts --type=clear",
@@ -50,7 +51,8 @@
     "crypto-js": "^4.2.0",
     "lodash": "^4.17.21",
     "qs": "^6.11.2",
-    "ts-morph": "^20.0.0"
+    "ts-morph": "^20.0.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

@@ -30,6 +30,10 @@ export type IConfig = {
   ) => Promise<void>;
   contentTemplate: string;
   pathFilter?: (ar: string) => boolean;
+  auth?: {
+    username: string;
+    password: string;
+  };
 };
 
 const output = path.join(process.cwd(), "./api2ts");
@@ -48,7 +52,7 @@ export const defaultConfig: IConfig = {
   serviceMap: {},
   serviceNameToPath: false,
   createTsFile: true,
-  createJsonFile: false,
+  createJsonFile: true,
   clearJsonFile: false,
   newLineKind: "LF",
   sort: false,

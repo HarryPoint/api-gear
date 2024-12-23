@@ -26,16 +26,16 @@ function cleanOptions(options: any): IConfig {
     configData = configFn as Partial<IConfig>;
   }
   delete ret["--"];
-  ret.translate = ret.translate === "true";
-  ret.createJsonFile = ret.json === "true";
+  ret.translate && (ret.translate = ret.translate === "true");
+  ret.json && (ret.createJsonFile = ret.json === "true");
   delete ret.json;
-  ret.createTsFile = ret.ts === "false" ? false : true;
+  ret.ts && (ret.createTsFile = ret.ts === "false" ? false : true);
   delete ret.ts;
   if (typeof ret.nlk === "string") {
     ret.newLineKind = ret.nlk as "CRLF" | "LF";
   }
   delete ret.nlk;
-  ret.sort = ret.sort === "true";
+  ret.sort && (ret.sort = ret.sort === "true");
   if (typeof ret.type === "string") {
     if (ret.type === "transform") {
       ret.transform = true;
