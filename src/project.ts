@@ -33,6 +33,7 @@ export const createTsFile = async (
     interfacePrefix: config.interfacePrefix,
     enumPrefix: config.enumPrefix,
     transformOriginType: config.transformOriginType,
+    headerTemplate: config.headerTemplate,
     customContent: config.customContent,
     contentTemplate: config.contentTemplate,
   });

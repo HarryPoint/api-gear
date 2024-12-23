@@ -2,6 +2,7 @@ import _ from "lodash";
 import { OptionalKind, PropertySignatureStructure, SourceFile } from "ts-morph";
 import { IConfig } from "./config";
 import { translate as translateFn } from "./translate";
+import { headerTemplate } from "./plkTpl";
 
 // 去除所有的特殊字符
 const formatInterfaceName = (name: string) =>
@@ -22,6 +23,8 @@ const formatEnumValue = (str: string) => {
   return str.trim().split(/-(.+)/, 2);
 };
 
+const checkKey = (key: string) => /^[a-zA-Z_]/.test(key) && /^\w+$/.test(key);
+
 export const createDefinitions = async (
   definitionsFile: SourceFile,
   data: any,
@@ -31,6 +34,7 @@ export const createDefinitions = async (
     enumPrefix?: string;
     transformOriginType: (define: any) => string;
     customContent?: IConfig["customContent"];
+    headerTemplate?: IConfig["headerTemplate"];
     contentTemplate?: IConfig["contentTemplate"];
   }
 ) => {
@@ -46,12 +50,13 @@ export const createDefinitions = async (
   const enumMap: Record<string, any[]> = {};
 
   const transFormType = (define: any, pathKeys: string[] = []): string => {
-    if (define.originalRef) {
-      if (!definitionsMap[define.originalRef]) {
+    if (define.$ref) {
+      const typeKey = define.$ref.replace("#/definitions/", "");
+      if (!definitionsMap[typeKey]) {
         // 可能存在无定义的类型
         return "any";
       }
-      return definitionsMap[define.originalRef].name;
+      return definitionsMap[typeKey].name;
     }
     const typeOrigin = transformOriginType(define);
     if (typeOrigin === "[]") {
@@ -62,7 +67,7 @@ export const createDefinitions = async (
         const requiredKeys = define.required || [];
         return `{ ${Object.keys(define.properties || {})
           .map((key) => {
-            return `${key}${
+            return `${checkKey(key) ? key : `"${key}"`}${
               requiredKeys.includes(key) ? "" : "?"
             }: ${transFormType(define.properties[key], [...pathKeys, key])}`;
           })
@@ -113,7 +118,13 @@ export const createDefinitions = async (
   });
 
   if (customContent && contentTemplate) {
-    await customContent(data, definitionsFile, contentTemplate, transFormType);
+    await customContent(
+      data,
+      definitionsFile,
+      headerTemplate,
+      contentTemplate,
+      transFormType
+    );
   }
   // 生成所有的定义
   for (let name in definitionsMap) {
@@ -127,7 +138,7 @@ export const createDefinitions = async (
         properties: Object.keys(define.properties || {}).map<
           OptionalKind<PropertySignatureStructure>
         >((key) => ({
-          name: key,
+          name: checkKey(key) ? key : `"${key}"`,
           type: transFormType(define.properties[key], [
             item.translateName,
             key,

@@ -1,13 +1,14 @@
 import { SourceFile } from "ts-morph";
 
-export const contentTemplate = `import { http } from "@/api/http";
+export const headerTemplate = `import { http } from "@/api/http";`;
 
+export const contentTemplate = `
 /**
 * @author <% author %> 
 * @desc <% desc %>
 * @link <% docUrl %>
 */
-export default function fetchMethod(options: <% argumentsDefine %> , extraOptions?: any) {
+export function <% method %>(options: <% argumentsDefine %> , extraOptions?: any) {
     return http<<% responseDefine %>>(
         {
             url: "<% path %>",
@@ -39,6 +40,7 @@ interface ITypeInfo {
 export const customContent = async (
   data: any,
   definitionsFile: SourceFile,
+  headerTemplate: string,
   contentTemplate: string,
   transFormType: (arg: any) => string
 ) => {
@@ -129,10 +131,11 @@ export const customContent = async (
       });
     }
   }
+  definitionsFile.addStatements(headerTemplate);
   typeInfoArr.forEach((typeInfo) => {
     let str = contentTemplate;
     Object.keys(typeInfo).forEach((key) => {
-      const target = `<% ${key} %>`;
+      const target = new RegExp(`<% ${key} %>`, "g");
       str = str.replace(target, typeInfo[key as keyof ITypeInfo]);
     });
     definitionsFile.addStatements(str);

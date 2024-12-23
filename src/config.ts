@@ -1,6 +1,11 @@
 import path from "path";
 import { SourceFile } from "ts-morph";
-import { contentTemplate, customContent, transformOriginType } from "./plkTpl";
+import {
+  contentTemplate,
+  customContent,
+  headerTemplate,
+  transformOriginType,
+} from "./plkTpl";
 
 export type IConfig = {
   interfacePrefix: string;
@@ -25,10 +30,12 @@ export type IConfig = {
   customContent: (
     data: any,
     definitionsFile: SourceFile,
+    headerTemplate: string,
     contentTemplate: string,
     transFormType: (arg: any) => string
   ) => Promise<void>;
   contentTemplate: string;
+  headerTemplate: string;
   pathFilter?: (ar: string) => boolean;
   auth?: {
     username: string;
@@ -60,6 +67,7 @@ export const defaultConfig: IConfig = {
   transformOriginType,
   customContent,
   contentTemplate,
+  headerTemplate,
   pathFilter: (ar: string) => !!ar,
 };
 
