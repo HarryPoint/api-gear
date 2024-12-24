@@ -1,6 +1,6 @@
 import { SourceFile } from "ts-morph";
 
-export const headerTemplate = `import { http } from "@/api/http";`;
+export const headerTemplate = `import { apiFetch } from "@/common/axios";`;
 
 export const contentTemplate = `
 /**
@@ -9,7 +9,7 @@ export const contentTemplate = `
 * @link https://sit-open-api.fms-sit.lylo.tech/swagger#/<% docUrl %>
 */
 export function <% method %>(options: <% argumentsDefine %> , extraOptions?: any) {
-    return http<<% responseDefine %>>(
+    return apiFetch<<% responseDefine %>>(
         {
             url: "<% path %>",
             method: "<% method %>",
