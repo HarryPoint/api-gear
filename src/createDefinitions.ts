@@ -2,7 +2,7 @@ import _ from "lodash";
 import { OptionalKind, PropertySignatureStructure, SourceFile } from "ts-morph";
 import { IConfig } from "./config";
 import { translate as translateFn } from "./translate";
-import { headerTemplate } from "./plkTpl";
+import { headerTemplate } from "./template";
 
 // 去除所有的特殊字符
 const formatInterfaceName = (name: string) =>

@@ -6,7 +6,7 @@ export const contentTemplate = `
 /**
 * @author <% author %> 
 * @desc <% desc %>
-* @link <% docUrl %>
+* @link https://sit-open-api.fms-sit.lylo.tech/swagger#/<% docUrl %>
 */
 export function <% method %>(options: <% argumentsDefine %> , extraOptions?: any) {
     return http<<% responseDefine %>>(
@@ -49,9 +49,7 @@ export const customContent = async (
     const fetchDefines = data.paths[url];
     for (let methodStr in fetchDefines) {
       const methodDefine = fetchDefines[methodStr];
-      const docUrl = `http://${
-        data.host
-      }/doc.html#/default/${methodDefine.tags?.join("/")}/${
+      const docUrl = `${methodDefine.tags?.join("/")}/${
         methodDefine.operationId
       }`;
       const author = methodDefine?.["x-author"] || "";
@@ -142,7 +140,7 @@ export const customContent = async (
   });
 };
 
-// plk 特有转换逻辑
+// 特有转换逻辑
 export const transformOriginType = (define: any): string => {
   const typeName = `${define.type}${define.format ? `(${define.format})` : ""}`;
 

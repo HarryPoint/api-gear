@@ -5,7 +5,7 @@ import {
   customContent,
   headerTemplate,
   transformOriginType,
-} from "./plkTpl";
+} from "./template";
 
 export type IConfig = {
   interfacePrefix: string;
