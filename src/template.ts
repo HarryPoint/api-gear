@@ -1,6 +1,6 @@
 import { SourceFile } from "ts-morph";
 
-export const headerTemplate = `import { apiFetch } from "@/common/axios";`;
+export const headerTemplate = `import { apiFetch } from "@/common/utils/axios";`;
 
 export const contentTemplate = `
 /**
