@@ -1,6 +1,6 @@
 {
-  "name": "plk-api2ts",
-  "version": "2.1.5",
+  "name": "api-gear",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -21,15 +21,15 @@
     "src:json:filter": "ts-node ./src/main.ts --json=true --filter=/masterdata-service/saleAssist/compute",
     "build": "tsc -d"
   },
-  "repository": "git+https://github.com/HarryPoint/plk-api2ts.git",
+  "repository": "git+https://github.com/HarryPoint/api-gear.git",
   "bugs": {
-    "url": "https://github.com/HarryPoint/plk-api2ts/issues"
+    "url": "https://github.com/HarryPoint/api-gear/issues"
   },
-  "homepage": "https://github.com/HarryPoint/plk-api2ts#readme",
+  "homepage": "https://github.com/HarryPoint/api-gear#readme",
   "keywords": [
     "Swagger",
     "typescript",
-    "api2ts",
+    "api-gear",
     "Swagger2",
     "code generation",
     "code refactor"
@@ -37,7 +37,7 @@
   "author": "harry",
   "license": "MIT",
   "bin": {
-    "api2ts": "./bin/api2ts.js"
+    "api-gear": "./bin/api-gear.js"
   },
   "files": [
     "bin",

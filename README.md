@@ -1,10 +1,10 @@
-# plk-api2ts
+# api-gear
 
 [![NPM][npm-version-image]][npm-version-url]
 
-plk-api2ts is an efficient engineering tool that can convert Swagger (version 2) documents into TypeScript files. The main goal of this tool is to automate the type definitions of backend interfaces, convert them into frontend code, thereby eliminating the need for manual type definition writing.
+api-gear is an efficient engineering tool that can convert Swagger (version 2) documents into TypeScript files. The main goal of this tool is to automate the type definitions of backend interfaces, convert them into frontend code, thereby eliminating the need for manual type definition writing.
 
-By using plk-api2ts, you can greatly improve development efficiency, reduce errors, and ensure the type consistency of front-end and back-end interfaces. This tool is particularly suitable for use in large projects, which may contain a large number of interfaces and type definitions.
+By using api-gear, you can greatly improve development efficiency, reduce errors, and ensure the type consistency of front-end and back-end interfaces. This tool is particularly suitable for use in large projects, which may contain a large number of interfaces and type definitions.
 
 English | [简体中文](./README.zh-CN.md)
 
@@ -20,10 +20,10 @@ English | [简体中文](./README.zh-CN.md)
 1. Installation
 
 ```shell
-npm install plk-api2ts -D
+npm install api-gear -D
 ```
 
-1. Add a configuration file `api2ts.config.js`(this can be omitted if only using the command-line tool to convert Swagger to TypeScript)
+1. Add a configuration file `api-gear.config.js`(this can be omitted if only using the command-line tool to convert Swagger to TypeScript)
 
 ```javascript
 const path = require("path");
@@ -43,7 +43,7 @@ module.exports = () => {
 ```json
 {
   "scripts": {
-    "api2ts": "api2ts",
+    "api-gear": "api-gear",
   }
 }
 ```
@@ -53,12 +53,12 @@ module.exports = () => {
 > Only update the definition files.
 
 ```shell
-npm run api2ts
+npm run api-gear
 ```
 
 5. View Help Information
 ```shell
-npx api2ts --help
+npx api-gear --help
 ```
 
 
@@ -66,7 +66,7 @@ npx api2ts --help
 
 | options             |                                                                    desc                                                                    |                                               type                                                |                                default |
 | :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------: | -------------------------------------: |
-| output              |                                                   File Generation Directory (Full Path)                                                    |                                              string                                               |   path.join(process.cwd(), "./api2ts") |
+| output              |                                                   File Generation Directory (Full Path)                                                    |                                              string                                               | path.join(process.cwd(), "./api-gear") |
 | serviceMap          |                                                          Services to be Converted                                                          |                                      Record<string, string>                                       |                                   null |
 | serviceNameToPath   |                                            Whether to Add Subdirectories Based on Service Name                                             |                                              boolean                                              |                                  false |
 | translate           |                         Whether to Enable Translation (Automatically Translate Chinese into Corresponding English)                         |                                              boolean                                              |            false（ --translate=true ） |
@@ -382,41 +382,41 @@ module.exports = () => {
 2. The automatically generated translation name does not meet the requirements.
 Modify the dictionary content in translateCache.json and re-execute the code generation logic. 
 ```bash
-npm run api2ts
+npm run api-gear
 ```
 
 3. Customize the Update of a Specific Interface
 ```bash
-npx api2ts --filter=Your Interface Request Path
+npx api-gear --filter=Your Interface Request Path
 ```
 
 4. Swagger file needed to generate the interface
 ```bash
-npx api2ts --json=true
+npx api-gear --json=true
 ```
 
 5. Need to clear the generated swagger files.
 ```bash
-npx api2ts --type=clear
+npx api-gear --type=clear
 ```
 
 6. Currently have a Swagger file and want to convert it to TS definitions.
 ```bash
-npx api2ts --type=transform
+npx api-gear --type=transform
 ```
 7. Specify the Swagger files in the conversion folder to TypeScript.
 ```bash
-npx api2ts --type=transform --target=./your_path
+npx api-gear --type=transform --target=./your_path
 ```
 
 7. Specify the Swagger files in the conversion folder to TypeScript and translate the interface names into English.
 ```bash
-npx api2ts --type=transform --target=./your_path --translate=true
+npx api-gear --type=transform --target=./your_path --translate=true
 ```
 
 8. Clear the Swagger files in the conversion folder.
 ```bash
-npx api2ts --type=clear --target=./your_path
+npx api-gear --type=clear --target=./your_path
 ```
 
 ### Feature List
@@ -443,5 +443,5 @@ npx api2ts --type=clear --target=./your_path
 
 Everyone is welcome to raise issues, but I hope you can provide your configuration, or provide the swagger json data where the type conversion is abnormal, and clearly describe how to reproduce the problem. I will clean up issues irregularly. Finally, I hope everyone can enjoy coding, and no longer need to write ts code related to api ☺
 
-[npm-version-image]: https://img.shields.io/npm/v/plk-api2ts.svg?style=flat-square
-[npm-version-url]: https://www.npmjs.com/package/plk-api2ts
+[npm-version-image]: https://img.shields.io/npm/v/api-gear.svg?style=flat-square
+[npm-version-url]: https://www.npmjs.com/package/api-gear

@@ -1,10 +1,10 @@
-# plk-api2ts
+# api-gear
 
 [![NPM][npm-version-image]][npm-version-url]
 
-plk-api2ts 是一个高效的工程化工具，它可以将 Swagger（v2版本） 文档转换为 TypeScript 文件。这个工具的主要目标是自动化后端接口的类型定义，将其转换为前端代码，从而消除了手动编写类型定义的需求。
+api-gear 是一个高效的工程化工具，它可以将 Swagger（v2版本） 文档转换为 TypeScript 文件。这个工具的主要目标是自动化后端接口的类型定义，将其转换为前端代码，从而消除了手动编写类型定义的需求。
 
-通过使用 plk-api2ts，你可以大大提高开发效率，减少错误，并确保前后端接口的类型一致性。这个工具特别适合在大型项目中使用，其中可能包含大量的接口和类型定义。
+通过使用 api-gear，你可以大大提高开发效率，减少错误，并确保前后端接口的类型一致性。这个工具特别适合在大型项目中使用，其中可能包含大量的接口和类型定义。
 
 [English](./README.md) | 简体中文
 
@@ -20,10 +20,10 @@ plk-api2ts 是一个高效的工程化工具，它可以将 Swagger（v2版本�
 1. 安装
 
 ```shell
-npm install plk-api2ts -D
+npm install api-gear -D
 ```
 
-2. 添加配置文件 `api2ts.config.js`（如果仅做命令行工具转换swagger为TypeScript可以省略）
+2. 添加配置文件 `api-gear.config.js`（如果仅做命令行工具转换swagger为TypeScript可以省略）
 
 ```javascript
 const path = require("path");
@@ -43,7 +43,7 @@ module.exports = () => {
 ```json
 {
   "scripts": {
-    "api2ts": "api2ts",
+    "api-gear": "api-gear",
   }
 }
 ```
@@ -53,34 +53,34 @@ module.exports = () => {
 > 仅更新定义文件
 
 ```shell
-npm run api2ts
+npm run api-gear
 ```
 
 5. 帮助信息查看
 ```shell
-npx api2ts --help
+npx api-gear --help
 ```
 
 
 ### 配置项
 
-| 选项名称            |                                        描述                                        |                                               类型                                                |                               默认值 |
-| :------------------ | :--------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------: | -----------------------------------: |
-| output              |                               文件生成目录(完整路径)                               |                                              string                                               | path.join(process.cwd(), "./api2ts") |
-| serviceMap          |                                   需要转换的服务                                   |                                      Record<string, string>                                       |                                 null |
-| serviceNameToPath   |                            是否根据服务名称添加子级目录                            |                                              boolean                                              |                                false |
-| translate           |                      是否启用翻译（自动翻译中文为对应的英文）                      |                                              boolean                                              |      false（ --translate=true 修改） |
-| contentTemplate     |                                   自定义内容模板                                   |                                            见下方说明                                             |                         详见下方说明 |
-| customContent       |                                 自定义文件添加内容                                 | ( data: any,  definitionsFile: SourceFile, transFormType: (arg: any) => string ) => Promise<void> |                         详见下方说明 |
-| interfacePrefix     |                                interface自定义前缀                                 |                                              string                                               |                                  'I' |
-| enumPrefix          |                                 enum自定义定义前缀                                 |                                              string                                               |                                  'E' |
-| createTsFile        |                                   是否生成ts文件                                   |                                              boolean                                              |              true ( --ts=false 修改) |
-| createJsonFile      |                                  是否生成json文件                                  |                                              boolean                                              |            false ( --json=true 修改) |
-| clearJsonFile       |                                  是否清理json文件                                  |                                              boolean                                              |           false ( --type=clear 修改) |
-| newLineKind         |                                      行尾序列                                      |                                           'CRLF'\|'LF'                                            |               'LF'( --nlk=CRLF 修改) |
-| sort                | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                              boolean                                              |             false (--sort=true 修改) |
-| transformOriginType |                            自定义swagger内type类型转换                             |                  (define: swagger) => "string"\| "number"\|"boolean"\|"[]"\|"{}"                  |                       详情见下方说明 |
-| pathFilter          |                           过滤目标项（用于更新单个接口）                           |                                     (path: string) => boolean                                     |                           () => true |
+| 选项名称            |                                        描述                                        |                                               类型                                                |                                 默认值 |
+| :------------------ | :--------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------: | -------------------------------------: |
+| output              |                               文件生成目录(完整路径)                               |                                              string                                               | path.join(process.cwd(), "./api-gear") |
+| serviceMap          |                                   需要转换的服务                                   |                                      Record<string, string>                                       |                                   null |
+| serviceNameToPath   |                            是否根据服务名称添加子级目录                            |                                              boolean                                              |                                  false |
+| translate           |                      是否启用翻译（自动翻译中文为对应的英文）                      |                                              boolean                                              |        false（ --translate=true 修改） |
+| contentTemplate     |                                   自定义内容模板                                   |                                            见下方说明                                             |                           详见下方说明 |
+| customContent       |                                 自定义文件添加内容                                 | ( data: any,  definitionsFile: SourceFile, transFormType: (arg: any) => string ) => Promise<void> |                           详见下方说明 |
+| interfacePrefix     |                                interface自定义前缀                                 |                                              string                                               |                                    'I' |
+| enumPrefix          |                                 enum自定义定义前缀                                 |                                              string                                               |                                    'E' |
+| createTsFile        |                                   是否生成ts文件                                   |                                              boolean                                              |                true ( --ts=false 修改) |
+| createJsonFile      |                                  是否生成json文件                                  |                                              boolean                                              |              false ( --json=true 修改) |
+| clearJsonFile       |                                  是否清理json文件                                  |                                              boolean                                              |             false ( --type=clear 修改) |
+| newLineKind         |                                      行尾序列                                      |                                           'CRLF'\|'LF'                                            |                 'LF'( --nlk=CRLF 修改) |
+| sort                | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                              boolean                                              |               false (--sort=true 修改) |
+| transformOriginType |                            自定义swagger内type类型转换                             |                  (define: swagger) => "string"\| "number"\|"boolean"\|"[]"\|"{}"                  |                         详情见下方说明 |
+| pathFilter          |                           过滤目标项（用于更新单个接口）                           |                                     (path: string) => boolean                                     |                             () => true |
 
 ### 默认 `contentTemplate`
 > 最终会被 ·customContent·消费
@@ -382,41 +382,41 @@ module.exports = () => {
 2. 自动生成的翻译名称不符合要求
 修改 translateCache.json 中字典内容，重新执行代码生成逻辑 
 ```bash
-npm run api2ts
+npm run api-gear
 ```
 
 3. 自定义更新某一个接口
 ```bash
-npx api2ts --filter=你的接口请求路径
+npx api-gear --filter=你的接口请求路径
 ```
 
 4. 需要生成接口的swagger文件
 ```bash
-npx api2ts --json=true
+npx api-gear --json=true
 ```
 
 5. 需要清除生成的swagger文件
 ```bash
-npx api2ts --type=clear
+npx api-gear --type=clear
 ```
 
 6. 当前已有swagger文件，想要转换为ts定义
 ```bash
-npx api2ts --type=transform
+npx api-gear --type=transform
 ```
 7. 指定转换文件夹下的swagger 文件为 TypeScript
 ```bash
-npx api2ts --type=transform --target=./your_path
+npx api-gear --type=transform --target=./your_path
 ```
 
 7. 指定转换文件夹下的swagger 文件为 TypeScript 并且将 interface 名称翻译为英文
 ```bash
-npx api2ts --type=transform --target=./your_path --translate=true
+npx api-gear --type=transform --target=./your_path --translate=true
 ```
 
 8. 清除转换文件夹下的swagger 文件
 ```bash
-npx api2ts --type=clear --target=./your_path
+npx api-gear --type=clear --target=./your_path
 ```
 
 ### 功能清单
@@ -443,5 +443,5 @@ npx api2ts --type=clear --target=./your_path
 
 欢迎大家提 issue, 但希望您能提供你的配置，或者给出类型转换有异常的swagger json 数据，描述清楚如何复现问题。我将不定期清理issue。最后希望大家都能愉快coding, 不用再写api相关的ts代码☺
 
-[npm-version-image]: https://img.shields.io/npm/v/plk-api2ts.svg?style=flat-square
-[npm-version-url]: https://www.npmjs.com/package/plk-api2ts
+[npm-version-image]: https://img.shields.io/npm/v/api-gear.svg?style=flat-square
+[npm-version-url]: https://www.npmjs.com/package/api-gear

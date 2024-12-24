@@ -42,7 +42,7 @@ export type IConfig = {
   };
 };
 
-const output = path.join(process.cwd(), "./api2ts");
+const output = path.join(process.cwd(), "./api-gear");
 
 export const defaultConfig: IConfig = {
   translate: false,

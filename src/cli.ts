@@ -5,14 +5,17 @@ import { main } from "./main";
 import path from "path";
 import fs from "fs";
 
-const cli = cac("api2ts");
+const cli = cac("api-gear");
 
 /**
  * removing global flags before passing as command specific sub-configs
  */
 function cleanOptions(options: any): IConfig {
   const ret = { ...options };
-  const configPath = path.join(process.cwd(), ret.config || "api2ts.config.js");
+  const configPath = path.join(
+    process.cwd(),
+    ret.config || "api-gear.config.js"
+  );
   let configFn = (config: IConfig, argv: any) => config;
   if (fs.existsSync(configPath)) {
     configFn = require(configPath);
@@ -68,7 +71,7 @@ function cleanOptions(options: any): IConfig {
 cli
   .option(
     "--config <string>",
-    `[string] config file path (default: "api2ts.config.js")`
+    `[string] config file path (default: "api-gear.config.js")`
   )
   .option(
     "--translate <boolean>",
