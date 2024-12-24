@@ -179,6 +179,7 @@ export const transformOriginType = (define: any): string => {
     boolean: "boolean",
     array: "[]",
     object: "{}",
+    "number(float)": "number",
   };
   return defaultTypeMap[typeName as keyof typeof defaultTypeMap] as string;
 };
