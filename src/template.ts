@@ -63,6 +63,7 @@ export const customContent = async (
       let bodyDefine: any;
       let queryDefine: any;
       let arrayQueryDefineMap: Record<string, any> = {};
+      let pathDefine: any;
       methodDefine.parameters?.forEach((paramsDefine: any) => {
         if (paramsDefine.in === "body") {
           bodyDefine = paramsDefine;
@@ -97,6 +98,22 @@ export const customContent = async (
             queryDefine.schema.properties[paramsDefine.name] = paramsDefine;
           }
         }
+        if (paramsDefine.in === "path") {
+          if (!pathDefine) {
+            pathDefine = {
+              in: "path",
+              schema: {
+                type: "object",
+                required: [],
+                properties: {},
+              },
+            };
+          }
+          if (paramsDefine.required) {
+            pathDefine.schema.required.push(paramsDefine.name);
+          }
+          pathDefine.schema.properties[paramsDefine.name] = paramsDefine;
+        }
       });
       if (queryDefine) {
         queryDefine.schema.properties = {
@@ -104,11 +121,18 @@ export const customContent = async (
           ...arrayQueryDefineMap,
         };
       }
-      const defineArr = [bodyDefine, queryDefine].filter(Boolean);
+      const defineArr = [pathDefine, bodyDefine, queryDefine].filter(Boolean);
       const argumentsDefine = (() => {
         let str = "{";
         defineArr.forEach((defineItem, index) => {
-          const name = defineItem.in === "body" ? "data" : "params";
+          const name =
+            defineItem.in === "body"
+              ? "data"
+              : defineItem.in === "query"
+              ? "params"
+              : defineItem.in === "path"
+              ? "path"
+              : "unknown";
           if (index) {
             str += ",";
           }
