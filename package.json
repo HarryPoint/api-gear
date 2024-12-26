@@ -19,7 +19,8 @@
     "src:transform": "ts-node ./src/main.ts --type=transform --target=./case --translate=true",
     "src:filter": "ts-node ./src/main.ts --filter=/plk-uaa-service/productOrder/newBuyAdd",
     "src:json:filter": "ts-node ./src/main.ts --json=true --filter=/masterdata-service/saleAssist/compute",
-    "build": "tsc -d"
+    "build": "tsc -d",
+    "sync": "open https://npmmirror.com/package/api-gear"
   },
   "repository": "git+https://github.com/HarryPoint/api-gear.git",
   "bugs": {
