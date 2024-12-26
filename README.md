@@ -81,6 +81,7 @@ npx api-gear --help
 | sort                | When generating interfaces, sort member names (the order of data content keys is unstable, enabling this can prevent invalid file changes) |                                              boolean                                              |                   false (--sort=true ) |
 | transformOriginType |                                           Customize the Conversion of Type Types within Swagger                                            |                  (define: swagger) => "string"\| "number"\|"boolean"\|"[]"\|"{}"                  | See the details below for explanation. |
 | pathFilter          |                                         Filter Target Items (Used for Updating a Single Interface)                                         |                                     (path: string) => boolean                                     |                             () => true |
+| auth                |                                                                 Bear Auth                                                                  |                      (path: string) => {username: string, password: string}                       |                              undefined |
 
 ###  `contentTemplate` default value
 > Will eventually be consumed by  ·customContent·

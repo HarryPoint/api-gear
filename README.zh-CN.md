@@ -81,6 +81,7 @@ npx api-gear --help
 | sort                | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                              boolean                                              |               false (--sort=true 修改) |
 | transformOriginType |                            自定义swagger内type类型转换                             |                  (define: swagger) => "string"\| "number"\|"boolean"\|"[]"\|"{}"                  |                         详情见下方说明 |
 | pathFilter          |                           过滤目标项（用于更新单个接口）                           |                                     (path: string) => boolean                                     |                             () => true |
+| auth                |                                     Bear Auth                                      |                      (path: string) => {username: string, password: string}                       |                              undefined |
 
 ### 默认 `contentTemplate`
 > 最终会被 ·customContent·消费

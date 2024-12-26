@@ -180,6 +180,7 @@ export const transformOriginType = (define: any): string => {
     array: "[]",
     object: "{}",
     "number(float)": "number",
+    "number(double)": "number",
   };
   return defaultTypeMap[typeName as keyof typeof defaultTypeMap] as string;
 };
