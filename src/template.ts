@@ -166,21 +166,13 @@ export const customContent = async (
 
 // 特有转换逻辑
 export const transformOriginType = (define: any): string => {
-  const typeName = `${define.type}${define.format ? `(${define.format})` : ""}`;
-
   const defaultTypeMap = {
     string: "string",
-    "string(date-time)": "string",
-    "string(date)": "string",
     integer: "number",
-    "integer(int64)": "string",
-    "integer(int32)": "number",
     number: "number",
     boolean: "boolean",
     array: "[]",
     object: "{}",
-    "number(float)": "number",
-    "number(double)": "number",
   };
-  return defaultTypeMap[typeName as keyof typeof defaultTypeMap] as string;
+  return defaultTypeMap[define.type as keyof typeof defaultTypeMap] as string;
 };
