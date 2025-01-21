@@ -94,6 +94,16 @@ export const customContent = async (
             }
             targetDefine.items.properties[key] = paramsDefine;
             arrayQueryDefineMap[name] = targetDefine;
+          } else if (paramsDefine.name.match(/^\w+\[\w+\]$/)) {
+            const [name, keyType] = paramsDefine.name.split(/\[|\]/);
+            const keyName = `[${keyType}]`;
+            queryDefine.schema.properties[name] = {
+              type: "object",
+              properties: {
+                [keyName]: paramsDefine,
+              },
+              required: [keyName],
+            };
           } else {
             queryDefine.schema.properties[paramsDefine.name] = paramsDefine;
           }

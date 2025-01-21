@@ -67,9 +67,18 @@ export const createDefinitions = async (
         const requiredKeys = define.required || [];
         return `{ ${Object.keys(define.properties || {})
           .map((key) => {
-            return `${checkKey(key) ? key : `"${key}"`}${
-              requiredKeys.includes(key) ? "" : "?"
-            }: ${transFormType(define.properties[key], [...pathKeys, key])}`;
+            return `${
+              checkKey(key)
+                ? key
+                : key.includes("[")
+                ? (() => {
+                    return `[key: ${key.replace(/\[|\]/g, "")}]`;
+                  })()
+                : `"${key}"`
+            }${requiredKeys.includes(key) ? "" : "?"}: ${transFormType(
+              define.properties[key],
+              [...pathKeys, key]
+            )}`;
           })
           .join("; ")} }`;
       }
