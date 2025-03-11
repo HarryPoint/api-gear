@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "src": "ts-node ./src/cli.ts",
+    "morph": "ts-node ./morph_demo/morph.ts",
     "build": "tsc -d",
     "sync": "open https://npmmirror.com/package/api-gear"
   },
