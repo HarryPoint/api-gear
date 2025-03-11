@@ -7,7 +7,7 @@ import { headerTemplate } from "./template";
 // 去除所有的特殊字符
 const formatInterfaceName = (name: string) =>
   name
-    .split(/[、,，'/《》«»()（）-\s]/)
+    .split(/[.、,，'/《》«»()（）-\s]/)
     .map(_.upperFirst)
     .join("");
 
