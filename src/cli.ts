@@ -16,6 +16,7 @@ function cleanOptions(options: any): IConfig {
     process.cwd(),
     ret.config || "api-gear.config.js"
   );
+  console.log("configPath", configPath);
   let configFn = (config: IConfig, argv: any) => config;
   if (fs.existsSync(configPath)) {
     configFn = require(configPath);
@@ -28,6 +29,7 @@ function cleanOptions(options: any): IConfig {
   } else {
     configData = configFn as Partial<IConfig>;
   }
+  console.log("configData", configData);
   delete ret["--"];
   ret.translate && (ret.translate = ret.translate === "true");
   ret.json && (ret.createJsonFile = ret.json === "true");

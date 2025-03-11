@@ -6,6 +6,34 @@ import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
 import { createJsonFile, main as createProject, createTsFile } from "./project";
 import { transform } from "./transform";
 
+const sortData = (data: any): any => {
+  if (Array.isArray(data)) {
+    return data.map(sortData);
+  }
+  if (_.isObject(data)) {
+    let keys = Object.keys(data).sort();
+    return keys.reduce((pre, next) => {
+      pre[next] = sortData((data as any)[next]);
+      return pre;
+    }, {} as Record<string, any>);
+  }
+  return data;
+};
+
+const findOriginalRef = (pathItem: any): string[] => {
+  let result: string[] = [];
+  for (let key in pathItem) {
+    if (key === "$ref") {
+      return [pathItem[key].replace("#/definitions/", "")];
+    }
+    if (_.isObject(pathItem[key])) {
+      result = [...result, ...findOriginalRef(pathItem[key])];
+    }
+  }
+  return result;
+};
+
+
 const fetchData = async (
   config: IConfig,
   project: Project,
@@ -19,38 +47,14 @@ const fetchData = async (
   const { data: originData } = await axios.get(`${apiUri}`, {
     auth: config.auth,
   });
-  const sortData = (data: any): any => {
-    if (Array.isArray(data)) {
-      return data.map(sortData);
-    }
-    if (_.isObject(data)) {
-      let keys = Object.keys(data).sort();
-      return keys.reduce((pre, next) => {
-        pre[next] = sortData((data as any)[next]);
-        return pre;
-      }, {} as Record<string, any>);
-    }
-    return data;
-  };
+
   const data = config.sort ? sortData(originData) : originData;
 
   const baseData = _.pick(data, ["basePath", "host", "info", "swagger"]);
-  const findOriginalRef = (pathItem: any): string[] => {
-    let result: string[] = [];
-    for (let key in pathItem) {
-      if (key === "$ref") {
-        return [pathItem[key].replace("#/definitions/", "")];
-      }
-      if (_.isObject(pathItem[key])) {
-        result = [...result, ...findOriginalRef(pathItem[key])];
-      }
-    }
-    return result;
-  };
 
   const createDefinitions = (
-    target: any,
-    prevDefines: Record<string, any> = {}
+      target: any,
+      prevDefines: Record<string, any> = {}
   ): Record<string, any> => {
     return findOriginalRef(target).reduce((pre, next) => {
       if (pre.hasOwnProperty(next)) {
