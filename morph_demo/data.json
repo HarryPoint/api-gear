@@ -9,12 +9,38 @@
   },
   "swagger": "2.0",
   "paths": {
-    "/rental-application/{id}": {
+    "/rental-application": {
       "get": {
         "consumes": [
           "application/json"
         ],
-        "description": "通过 RentalApplication ID 获取 RentalApplication 信息",
+        "description": "获取 RentalApplication 列表",
+        "parameters": [
+          {
+            "description": "search",
+            "in": "query",
+            "name": "search",
+            "type": "string"
+          },
+          {
+            "description": "page_num",
+            "in": "query",
+            "name": "page_num",
+            "type": "integer"
+          },
+          {
+            "description": "page_size",
+            "in": "query",
+            "name": "page_size",
+            "type": "integer"
+          },
+          {
+            "description": "filter",
+            "in": "query",
+            "name": "filter",
+            "type": "string"
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -22,11 +48,11 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/dto.RentalApplicationDetail"
+              "$ref": "#/definitions/dto.ListRentalApplicationResponse"
             }
           }
         },
-        "summary": "获取 RentalApplication 信息",
+        "summary": "获取 RentalApplication 列表",
         "tags": [
           "rental-application"
         ]
@@ -34,192 +60,83 @@
     }
   },
   "definitions": {
-    "dto.RentalApplicationDetail": {
+    "dto.ListRentalApplicationResponse": {
       "properties": {
-        "car": {
-          "type": "object"
-        },
-        "driver": {
-          "properties": {
-            "main": {
-              "$ref": "#/definitions/dto.DriverDetail"
-            },
-            "reliefs": {
-              "items": {
-                "$ref": "#/definitions/dto.DriverDetail"
-              },
-              "type": "array"
-            }
-          },
-          "type": "object"
-        },
-        "type": {
-          "enum": [
-            "individual",
-            "company"
-          ],
-          "type": "string"
-        }
-      },
-      "required": [
-        "type"
-      ],
-      "type": "object"
-    },
-    "dto.DriverDetail": {
-      "properties": {
-        "address": {
-          "properties": {
-            "line_1": {
-              "type": "string"
-            },
-            "line_2": {
-              "type": "string"
-            },
-            "postal_code": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        },
-        "bank": {
-          "properties": {
-            "account_name": {
-              "type": "string"
-            },
-            "account_number": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        },
-        "birth_date": {
-          "type": "string"
-        },
-        "dd": {
-          "type": "object"
-        },
-        "drivingLicenseDetail": {
-          "properties": {
-            "expired_date": {
-              "type": "string"
-            },
-            "issued_date": {
-              "type": "string"
-            },
-            "licence_number": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        },
-        "driving_license_resources": {
+        "items": {
           "items": {
-            "$ref": "#/definitions/dto.AttachmentResource"
+            "$ref": "#/definitions/dto.RentalApplicationBrief"
           },
           "type": "array"
         },
-        "email": {
-          "type": "string"
-        },
-        "emergency_contacts": {
-          "items": {
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "phone_number": {
-                "type": "string"
-              },
-              "relationship": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
-          "type": "array"
-        },
-        "name": {
-          "type": "string"
-        },
-        "nationality": {
-          "type": "string"
-        },
-        "notes": {
-          "type": "string"
-        },
-        "nric": {
-          "type": "string"
-        },
-        "nric_resources": {
-          "items": {
-            "$ref": "#/definitions/dto.AttachmentResource"
-          },
-          "type": "array"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "platform": {
-          "type": "string"
-        },
-        "platform_tier": {
-          "type": "string"
-        },
-        "registered_address": {
-          "type": "string"
-        },
-        "sg_residential_status": {
-          "type": "string"
-        },
-        "source_id": {
+        "page_num": {
           "type": "integer"
         },
-        "tdvl_pdvl_resources": {
-          "items": {
-            "$ref": "#/definitions/dto.AttachmentResource"
-          },
-          "type": "array"
+        "page_size": {
+          "type": "integer"
         },
-        "vocationalLicenseDetail": {
-          "properties": {
-            "expired_date": {
-              "type": "string"
-            },
-            "issued_date": {
-              "type": "string"
-            },
-            "licence_number": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        },
-        "vocational_license_expiry_date": {
-          "type": "string"
-        },
-        "vocational_license_type": {
-          "type": "string"
+        "total": {
+          "type": "integer"
         }
       },
       "type": "object"
     },
-    "dto.AttachmentResource": {
+    "dto.RentalApplicationBrief": {
       "properties": {
-        "data": {
+        "creation_date": {
+          "type": "string"
+        },
+        "driver_name": {
+          "type": "string"
+        },
+        "driver_nric": {
           "type": "string"
         },
         "id": {
           "type": "integer"
+        },
+        "remarks": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/rentalapplications.Status"
         }
       },
       "type": "object"
+    },
+    "rentalapplications.Status": {
+      "enum": [
+        "unknown",
+        "DRAFT",
+        "PENDING_REVIEW",
+        "PENDING_APPROVAL",
+        "PENDING_CONFIRMATION",
+        "PENDING_REJECTED",
+        "PENDING_DEPOSIT",
+        "CANCELLED",
+        "PENDING_VEHICLE",
+        "PENDING_SIGNATURE",
+        "PENDING_COLLECTION",
+        "PENDING_FULFILMENT",
+        "COMPLETED",
+        "unknown"
+      ],
+      "type": "string",
+      "x-enum-varnames": [
+        "DefaultStatus",
+        "StatusDRAFT",
+        "StatusPENDING_REVIEW",
+        "StatusPENDING_APPROVAL",
+        "StatusPENDING_CONFIRMATION",
+        "StatusPENDING_REJECTED",
+        "StatusPENDING_DEPOSIT",
+        "StatusCANCELLED",
+        "StatusPENDING_VEHICLE",
+        "StatusPENDING_SIGNATURE",
+        "StatusPENDING_COLLECTION",
+        "StatusPENDING_FULFILMENT",
+        "StatusCOMPLETED",
+        "StatusUnknown"
+      ]
     }
   }
 }

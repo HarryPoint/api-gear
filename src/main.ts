@@ -85,8 +85,8 @@ const fetchData = async (
     const basePath = path.join(config.output, prefix);
     const filePath = path.join(basePath, pathStr);
     const apiPath = filePath.replace(basePath, path.sep);
-    const jsonFilePath = `${filePath}.json`;
-    const tsFilePath = `${filePath}.ts`;
+    const jsonFilePath = `${filePath}/index.json`;
+    const tsFilePath = `${filePath}/index.ts`;
     if (config.pathFilter && !config.pathFilter(apiPath)) {
       continue;
     }

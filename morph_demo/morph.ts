@@ -1,4 +1,4 @@
-import {NewLineKind, Project, StructureKind, WriterFunction} from "ts-morph";
+import {CodeBlockWriter, NewLineKind, Project, StructureKind, WriterFunction} from "ts-morph";
 import data from "./data.json"
 
 const project = new Project({
@@ -27,6 +27,13 @@ definitionsFile.addImportDeclaration({
     moduleSpecifier: '@/utils/index'
 })
 
+type IParametersItem = {
+    in: 'body' | 'query',
+    name: string,
+    required: boolean,
+    description: string,
+    type?:string
+}
 
 
 function formatName (name: string){
@@ -35,6 +42,20 @@ function formatName (name: string){
 
 function formatRef  (ref: string) {
     return formatName(ref.replace('#/definitions/', ''))
+}
+
+function objectWriter<T = any>(metaArr: T[], callback: (writer: CodeBlockWriter, dt: T) => void ):WriterFunction {
+    return (writer) => {
+        writer.write("{");
+        for(let i =0; i< metaArr.length; i++) {
+            const metaItem = metaArr[i];
+            if(i > 0) {
+                writer.write(",")
+            }
+            callback(writer, metaItem)
+        }
+        writer.write("}")
+    }
 }
 
 function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
@@ -48,6 +69,10 @@ function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
         }
         if(propertiesValue.$ref) {
             writer.write(formatRef(propertiesValue.$ref))
+            return;
+        }
+        if(propertiesValue.schema) {
+            typeWriterFnCreator(propertiesValue.schema)(writer)
             return;
         }
         switch (propertiesValue.type) {
@@ -88,9 +113,71 @@ function createFetchFunction (apiPath: string, methodType: string, methodMetaDat
         name: methodType,
         isExported: true
     })
+    functionDefine.addJsDoc({
+        description: methodMetaData.description,
+        tags: [{
+            tagName: 'link',
+            text: "sdfsdfsdsdfd"
+        }]
+    })
     functionDefine.addParameter({
         name: 'options',
-        type: "Record<string, any>"
+        type: (writer) => {
+            writer.write("{")
+            // path
+            {
+                const res = apiPath.match(/{\w+}/g)
+                if(res && res.length) {
+                    writer.write("path:")
+                    writer.write("{")
+                    for(let i =0; i< res.length; i++) {
+                        const match = res[i];
+                        const name = match.replace(/[{}]/g, '');
+                        console.log(match, name);
+                        if(i > 0) {
+                            writer.write(",")
+                        }
+                        writer.write(`${name}: string`)
+                    }
+                    writer.write("}")
+                }
+            }
+            // query
+            {
+                const queryArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'query') ?? []
+                if(queryArr.length) {
+                    writer.write("query:")
+                    writer.write("{");
+                    for(let i =0; i< queryArr.length; i++) {
+                        const queryItemMetaData = queryArr[i];
+                        if(i > 0) {
+                            writer.write(",")
+                        }
+                        writer.write(`${queryItemMetaData.name}${queryItemMetaData.required ? '' : '?'}: `)
+                        typeWriterFnCreator(queryItemMetaData)(writer)
+                    }
+                    writer.write("}")
+                }
+            }
+            // body data
+            {
+                const bodyArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'body') ?? []
+                if(bodyArr.length) {
+                    writer.write("data:")
+                    writer.write("{");
+                    for(let i =0; i< bodyArr.length; i++) {
+                        const bodyItemMetaData = bodyArr[i];
+                        if(i > 0) {
+                            writer.write(",")
+                        }
+                        writer.write(`${bodyItemMetaData.name}${bodyItemMetaData.required ? '' : '?'}: `)
+                        typeWriterFnCreator(bodyItemMetaData)(writer)
+                    }
+                    writer.write("}")
+                }
+            }
+            writer.write("}");
+        }
     })
     functionDefine.addParameter({
         name: 'extraOptions',

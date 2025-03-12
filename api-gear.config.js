@@ -3,10 +3,12 @@ const argv = require("yargs").argv;
 
 const platformMap = {
   sit: "https://sit-phv-admin-service.fms-sit.lylo.tech",
+  // sit: "https://sit-open-api.fms-sit.lylo.tech",
 };
 
 const serviceMap = {
   "admin-portal": "/swagger/doc.json",
+  // "fms": "/swagger/fms-service.swagger.json",
 };
 
 const apiMap = Object.keys(platformMap)
@@ -26,9 +28,9 @@ module.exports = () => {
     serviceMap: apiMap.sit,
     translate: true,
     sort: true,
-    // auth: {
-    //   username: "lumens",
-    //   password: "fmsservice",
-    // },
+    auth: {
+      username: "lumens",
+      password: "fmsservice",
+    },
   };
 };
