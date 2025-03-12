@@ -96,10 +96,7 @@ const fetchData = async (
       continue;
     }
     if (config.createTsFile) {
-      console.log(tsFilePath, interfacePath)
-      let relativePath = path.relative(tsFilePath, interfacePath);
-      relativePath = relativePath.replace('../', '').replace('.ts', '');
-      await createTsFile(config, project, tsFilePath, relativePath, jsonData);
+      await createTsFile(config, project, tsFilePath, jsonData);
     }
     if (config.createJsonFile) {
       await createJsonFile(config, project, jsonFilePath, jsonData);

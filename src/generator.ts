@@ -44,10 +44,10 @@ function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writ
 }
 
 
-export async function generator(options:{ definitionsFile: SourceFile, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string }) {
+export async function generator(options:{ definitionsFile: SourceFile, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string, fetchMethodPath?: string }) {
     const interfaceCollector: string[] = [];
 
-    const {definitionsFile, data, mode = 'all', interfacePath} = options;
+    const {definitionsFile, data, mode = 'all', interfacePath = "@/autoApi/types", fetchMethodPath = "@/common/utils/axios"} = options;
 
 
     function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
@@ -239,7 +239,7 @@ export async function generator(options:{ definitionsFile: SourceFile, data: any
         }
         definitionsFile.addImportDeclaration({
             namedImports: ['apiFetch'],
-            moduleSpecifier: '@/utils/index'
+            moduleSpecifier: fetchMethodPath
         })
     }
 

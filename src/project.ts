@@ -24,13 +24,12 @@ export const createTsFile = async (
   config: IConfig,
   project: Project,
   filePath: string,
-  interfacePath: string,
   data: any
 ) => {
   const definitionsFile = project.createSourceFile(filePath, "", {
     overwrite: true,
   });
-  await generator({definitionsFile, data, mode: 'method', interfacePath})
+  await generator({definitionsFile, data, mode: 'method', interfacePath: config.interfacePath, fetchMethodPath: config.fetchMethodPath})
   definitionsFile.saveSync();
 };
 

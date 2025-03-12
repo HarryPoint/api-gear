@@ -8,6 +8,9 @@ import {
 } from "./template";
 
 export type IConfig = {
+  interfacePath: string;
+  fetchMethodPath: string;
+  // -----------
   interfacePrefix: string;
   enumPrefix: string;
   translate: boolean;
@@ -45,6 +48,9 @@ export type IConfig = {
 const output = path.join(process.cwd(), "./api-gear");
 
 export const defaultConfig: IConfig = {
+  interfacePath: '@/autoApi/types',
+  fetchMethodPath: '@/common/utils/axios',
+  // ----------
   translate: false,
   translateCacheFileName: "translateCache.json",
   translateApiUri: "https://openapi.youdao.com/v2/api",
