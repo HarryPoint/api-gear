@@ -21,6 +21,8 @@ const apiMap = Object.keys(platformMap)
   }))
   .reduce((prev, next) => ({ ...prev, ...next }), {});
 
+console.log(apiMap);
+
 module.exports = () => {
   console.log("argv.platform: ", argv.platform, apiMap.dev);
   return {
