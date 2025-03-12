@@ -44,15 +44,27 @@ function formatRef  (ref: string) {
     return formatName(ref.replace('#/definitions/', ''))
 }
 
-function objectWriter<T = any>(metaArr: T[], callback: (writer: CodeBlockWriter, dt: T) => void ):WriterFunction {
+function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writer: CodeBlockWriter, item: T, index: number, key?: string) => void ):WriterFunction {
     return (writer) => {
         writer.write("{");
-        for(let i =0; i< metaArr.length; i++) {
-            const metaItem = metaArr[i];
-            if(i > 0) {
-                writer.write(",")
+        if(Array.isArray(metaArr)) {
+            for(let i =0; i< metaArr.length; i++) {
+                const metaItem = metaArr[i];
+                if(i > 0) {
+                    writer.write(",")
+                }
+                callback(writer, metaItem, i)
             }
-            callback(writer, metaItem)
+        } else {
+            let i = 0;
+            for (const key in metaArr) {
+                const metaItem = metaArr[key];
+                if(i > 0) {
+                    writer.write(",")
+                }
+                callback(writer, metaItem, i, key)
+                i++;
+            }
         }
         writer.write("}")
     }
@@ -87,18 +99,14 @@ function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
                 return writer.write("[]");
             case "object":
                 if(propertiesValue.properties) {
-                    writer.write("{");
-                    for (const propertiesKey  in propertiesValue.properties) {
-                        const propertiesMeta = propertiesValue.properties[propertiesKey]
-                        writer.write(propertiesKey)
-                        if(!propertiesValue.required?.includes(propertiesKey)) {
+                    objectWriter(propertiesValue.properties, (writer, item, _index, key) => {
+                        writer.write(key as string)
+                        if(!propertiesValue.required?.includes(key)) {
                             writer.write('?')
                         }
                         writer.write(":")
-                        typeWriterFnCreator(propertiesMeta)(writer)
-                        writer.write(",")
-                    }
-                    writer.write("}");
+                        typeWriterFnCreator(item)(writer)
+                    })(writer)
                     return;
                 }
                 return writer.write("any");
@@ -123,57 +131,48 @@ function createFetchFunction (apiPath: string, methodType: string, methodMetaDat
     functionDefine.addParameter({
         name: 'options',
         type: (writer) => {
+            let keyCount = 0;
             writer.write("{")
             // path
             {
                 const res = apiPath.match(/{\w+}/g)
                 if(res && res.length) {
                     writer.write("path:")
-                    writer.write("{")
-                    for(let i =0; i< res.length; i++) {
-                        const match = res[i];
-                        const name = match.replace(/[{}]/g, '');
-                        console.log(match, name);
-                        if(i > 0) {
-                            writer.write(",")
-                        }
+                    objectWriter(res, (writer, item) => {
+                        const name = item.replace(/[{}]/g, '');
                         writer.write(`${name}: string`)
-                    }
-                    writer.write("}")
+                    })(writer)
+                    keyCount++;
                 }
             }
             // query
             {
                 const queryArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'query') ?? []
                 if(queryArr.length) {
-                    writer.write("query:")
-                    writer.write("{");
-                    for(let i =0; i< queryArr.length; i++) {
-                        const queryItemMetaData = queryArr[i];
-                        if(i > 0) {
-                            writer.write(",")
-                        }
-                        writer.write(`${queryItemMetaData.name}${queryItemMetaData.required ? '' : '?'}: `)
-                        typeWriterFnCreator(queryItemMetaData)(writer)
+                    if(keyCount) {
+                        writer.write(",")
                     }
-                    writer.write("}")
+                    writer.write("query:")
+                    objectWriter<IParametersItem>(queryArr, (writer, item) => {
+                        writer.write(`${item.name}${item.required ? '' : '?'}: `)
+                        typeWriterFnCreator(item)(writer)
+                    })(writer)
+                    keyCount++;
                 }
             }
             // body data
             {
                 const bodyArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'body') ?? []
                 if(bodyArr.length) {
-                    writer.write("data:")
-                    writer.write("{");
-                    for(let i =0; i< bodyArr.length; i++) {
-                        const bodyItemMetaData = bodyArr[i];
-                        if(i > 0) {
-                            writer.write(",")
-                        }
-                        writer.write(`${bodyItemMetaData.name}${bodyItemMetaData.required ? '' : '?'}: `)
-                        typeWriterFnCreator(bodyItemMetaData)(writer)
+                    if(keyCount) {
+                        writer.write(",")
                     }
-                    writer.write("}")
+                    writer.write("data:")
+                    objectWriter<IParametersItem>(bodyArr, (writer, item) => {
+                        writer.write(`${item.name}${item.required ? '' : '?'}: `)
+                        typeWriterFnCreator(item)(writer)
+                    })(writer)
+                    keyCount++;
                 }
             }
             writer.write("}");

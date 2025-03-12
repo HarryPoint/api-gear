@@ -9,12 +9,12 @@
   },
   "swagger": "2.0",
   "paths": {
-    "/rental-application": {
+    "/rental-application/driver/{id}/{name}": {
       "get": {
         "consumes": [
           "application/json"
         ],
-        "description": "获取 RentalApplication 列表",
+        "description": "获取 RentalApplication Driver 列表",
         "parameters": [
           {
             "description": "search",
@@ -48,23 +48,55 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/dto.ListRentalApplicationResponse"
+              "$ref": "#/definitions/dto.ListDriversResponse"
             }
           }
         },
-        "summary": "获取 RentalApplication 列表",
+        "summary": "获取 RentalApplication Driver 列表",
         "tags": [
-          "rental-application"
+          "rental-application-driver"
+        ]
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "创建 RentalApplication Driver",
+        "parameters": [
+          {
+            "description": "DriverDetail",
+            "in": "body",
+            "name": "req",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dto.DriverDetail"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/dto.DriverDetail"
+            }
+          }
+        },
+        "summary": "创建 RentalApplication Driver",
+        "tags": [
+          "rental-application-driver"
         ]
       }
     }
   },
   "definitions": {
-    "dto.ListRentalApplicationResponse": {
+    "dto.ListDriversResponse": {
       "properties": {
         "items": {
           "items": {
-            "$ref": "#/definitions/dto.RentalApplicationBrief"
+            "$ref": "#/definitions/dto.DriverBrief"
           },
           "type": "array"
         },
@@ -80,62 +112,246 @@
       },
       "type": "object"
     },
-    "dto.RentalApplicationBrief": {
+    "dto.DriverBrief": {
       "properties": {
-        "creation_date": {
+        "contract_no": {
           "type": "string"
         },
-        "driver_name": {
-          "type": "string"
-        },
-        "driver_nric": {
+        "contract_status": {
           "type": "string"
         },
         "id": {
           "type": "integer"
         },
-        "remarks": {
+        "name": {
           "type": "string"
         },
-        "status": {
-          "$ref": "#/definitions/rentalapplications.Status"
+        "nric": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
         }
       },
       "type": "object"
     },
-    "rentalapplications.Status": {
+    "dto.DriverDetail": {
+      "properties": {
+        "bank": {
+          "properties": {
+            "account_name": {
+              "type": "string"
+            },
+            "account_number": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "birth_date": {
+          "type": "string"
+        },
+        "driver_group": {
+          "type": "string"
+        },
+        "driving_license_issue_date": {
+          "type": "string"
+        },
+        "driving_license_resources": {
+          "items": {
+            "$ref": "#/definitions/dto.AttachmentResource"
+          },
+          "type": "array"
+        },
+        "dueDiligence": {
+          "properties": {
+            "at_fault_accident_count": {
+              "type": "integer"
+            },
+            "blacklist": {
+              "$ref": "#/definitions/rentalapplicationsubjects.Blacklist"
+            },
+            "demerit_points": {
+              "type": "integer"
+            },
+            "pdvl_tdvl_validity": {
+              "$ref": "#/definitions/rentalapplicationsubjects.PdvlTdvlValidity"
+            }
+          },
+          "type": "object"
+        },
+        "email": {
+          "type": "string"
+        },
+        "emergency_contacts": {
+          "items": {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "phone_number": {
+                "type": "string"
+              },
+              "relationship": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "nric": {
+          "type": "string"
+        },
+        "nric_resources": {
+          "items": {
+            "$ref": "#/definitions/dto.AttachmentResource"
+          },
+          "type": "array"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "platform_tier": {
+          "type": "string"
+        },
+        "postal_code": {
+          "type": "string"
+        },
+        "registered_address": {
+          "type": "string"
+        },
+        "sg_residential_status": {
+          "$ref": "#/definitions/rentalapplicationsubjects.SgResidentialStatus"
+        },
+        "source_id": {
+          "type": "integer"
+        },
+        "tdvl_pdvl_resources": {
+          "items": {
+            "$ref": "#/definitions/dto.AttachmentResource"
+          },
+          "type": "array"
+        },
+        "validation_result": {
+          "$ref": "#/definitions/rentalapplicationsubjects.ValidationResult"
+        },
+        "vocational_license_expiry_date": {
+          "type": "string"
+        },
+        "vocational_license_type": {
+          "$ref": "#/definitions/rentalapplicationsubjects.VocationalLicenseType"
+        }
+      },
+      "type": "object"
+    },
+    "dto.AttachmentResource": {
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "rentalapplicationsubjects.Blacklist": {
       "enum": [
         "unknown",
-        "DRAFT",
-        "PENDING_REVIEW",
-        "PENDING_APPROVAL",
-        "PENDING_CONFIRMATION",
-        "PENDING_REJECTED",
-        "PENDING_DEPOSIT",
-        "CANCELLED",
-        "PENDING_VEHICLE",
-        "PENDING_SIGNATURE",
-        "PENDING_COLLECTION",
-        "PENDING_FULFILMENT",
-        "COMPLETED",
+        "YES_INTERNAL",
+        "YES_EXTERNAL",
+        "NO",
         "unknown"
       ],
       "type": "string",
       "x-enum-varnames": [
-        "DefaultStatus",
-        "StatusDRAFT",
-        "StatusPENDING_REVIEW",
-        "StatusPENDING_APPROVAL",
-        "StatusPENDING_CONFIRMATION",
-        "StatusPENDING_REJECTED",
-        "StatusPENDING_DEPOSIT",
-        "StatusCANCELLED",
-        "StatusPENDING_VEHICLE",
-        "StatusPENDING_SIGNATURE",
-        "StatusPENDING_COLLECTION",
-        "StatusPENDING_FULFILMENT",
-        "StatusCOMPLETED",
-        "StatusUnknown"
+        "DefaultBlacklist",
+        "BlacklistYES_INTERNAL",
+        "BlacklistYES_EXTERNAL",
+        "BlacklistNO",
+        "BlacklistUnknown"
+      ]
+    },
+    "rentalapplicationsubjects.PdvlTdvlValidity": {
+      "enum": [
+        "unknown",
+        "LTE1",
+        "GT1_LTE2",
+        "GT2_LTE3",
+        "INVALID",
+        "unknown"
+      ],
+      "type": "string",
+      "x-enum-varnames": [
+        "DefaultPdvlTdvlValidity",
+        "PdvlTdvlValidityLTE1",
+        "PdvlTdvlValidityGT1_LTE2",
+        "PdvlTdvlValidityGT2_LTE3",
+        "PdvlTdvlValidityINVALID",
+        "PdvlTdvlValidityUnknown"
+      ]
+    },
+    "rentalapplicationsubjects.SgResidentialStatus": {
+      "enum": [
+        "unknown",
+        "CITIZEN",
+        "PR",
+        "FOREIGNER",
+        "unknown"
+      ],
+      "type": "string",
+      "x-enum-varnames": [
+        "DefaultSgResidentialStatus",
+        "SgResidentialStatusCITIZEN",
+        "SgResidentialStatusPR",
+        "SgResidentialStatusFOREIGNER",
+        "SgResidentialStatusUnknown"
+      ]
+    },
+    "rentalapplicationsubjects.ValidationResult": {
+      "enum": [
+        "unknown",
+        "PASS",
+        "REJECT",
+        "unknown"
+      ],
+      "type": "string",
+      "x-enum-varnames": [
+        "DefaultValidationResult",
+        "ValidationResultPASS",
+        "ValidationResultREJECT",
+        "ValidationResultUnknown"
+      ]
+    },
+    "rentalapplicationsubjects.VocationalLicenseType": {
+      "enum": [
+        "unknown",
+        "PDVL",
+        "TDVL",
+        "unknown"
+      ],
+      "type": "string",
+      "x-enum-varnames": [
+        "DefaultVocationalLicenseType",
+        "VocationalLicenseTypePDVL",
+        "VocationalLicenseTypeTDVL",
+        "VocationalLicenseTypeUnknown"
       ]
     }
   }
