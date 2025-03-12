@@ -31,7 +31,7 @@ export const transform = async (
         const data = fs.readFileSync(filePath);
         const swaggerData = JSON.parse(data.toString());
         const tsPath = path.join(info.dir, `${info.name}.ts`);
-        await createTsFile(config, project, tsPath, swaggerData);
+        await createTsFile(config, project, tsPath, '', swaggerData);
       }
     } else if (stat.isDirectory()) {
       await transform(config, project, filePath);

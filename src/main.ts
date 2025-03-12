@@ -5,6 +5,7 @@ import { Project } from "ts-morph";
 import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
 import { createJsonFile, main as createProject, createTsFile } from "./project";
 import { transform } from "./transform";
+import {typeFileGenerator} from "./typeFileGenerator";
 
 const sortData = (data: any): any => {
   if (Array.isArray(data)) {
@@ -47,10 +48,15 @@ const fetchData = async (
   const { data: originData } = await axios.get(`${apiUri}`, {
     auth: config.auth,
   });
+  const basePath = path.join(config.output, prefix);
 
   const data = config.sort ? sortData(originData) : originData;
 
   const baseData = _.pick(data, ["basePath", "host", "info", "swagger"]);
+
+  const interfacePath = path.join(basePath, 'types.ts');
+
+  await typeFileGenerator({project, filePath: interfacePath, data})
 
   const createDefinitions = (
       target: any,
@@ -82,7 +88,6 @@ const fetchData = async (
     ] as [string, any];
   });
   for (let [pathStr, jsonData] of openJsonArr) {
-    const basePath = path.join(config.output, prefix);
     const filePath = path.join(basePath, pathStr);
     const apiPath = filePath.replace(basePath, path.sep);
     const jsonFilePath = `${filePath}/index.json`;
@@ -91,7 +96,10 @@ const fetchData = async (
       continue;
     }
     if (config.createTsFile) {
-      await createTsFile(config, project, tsFilePath, jsonData);
+      console.log(tsFilePath, interfacePath)
+      let relativePath = path.relative(tsFilePath, interfacePath);
+      relativePath = relativePath.replace('../', '').replace('.ts', '');
+      await createTsFile(config, project, tsFilePath, relativePath, jsonData);
     }
     if (config.createJsonFile) {
       await createJsonFile(config, project, jsonFilePath, jsonData);

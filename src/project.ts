@@ -1,6 +1,7 @@
 import { NewLineKind, Project } from "ts-morph";
 import { IConfig } from "./config";
 import { createDefinitions } from "./createDefinitions";
+import {generator} from "./generator";
 
 export const main = async (config: IConfig) => {
   const project = new Project({
@@ -23,20 +24,13 @@ export const createTsFile = async (
   config: IConfig,
   project: Project,
   filePath: string,
+  interfacePath: string,
   data: any
 ) => {
   const definitionsFile = project.createSourceFile(filePath, "", {
     overwrite: true,
   });
-  await createDefinitions(definitionsFile, data, {
-    translate: config.translate,
-    interfacePrefix: config.interfacePrefix,
-    enumPrefix: config.enumPrefix,
-    transformOriginType: config.transformOriginType,
-    headerTemplate: config.headerTemplate,
-    customContent: config.customContent,
-    contentTemplate: config.contentTemplate,
-  });
+  await generator({definitionsFile, data, mode: 'method', interfacePath})
   definitionsFile.saveSync();
 };
 
