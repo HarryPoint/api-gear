@@ -20,20 +20,22 @@ const definitionsFile = project.createSourceFile(caseFileName('demo1'), "", {
     overwrite: true,
 });
 
-const defineNameMap: Record<string, any> = {};
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// const defineNameMap: Record<string, any> = {};
 
 const formatName = (name: string) => name.replace(".", "_")
 
-const formatRef = (ref: string) => ref.replace('#/definitions/', '');
+const formatRef = (ref: string) => formatName(ref.replace('#/definitions/', ''));
 
-const interfaceNames: string[] = []
+// const interfaceNames: string[] = []
 
 for (const definitionsKey in data.definitions) {
     const interfaceName = formatName(definitionsKey);
     // @ts-ignore
     const metaData = data.definitions[definitionsKey] as any
-    interfaceNames.push(interfaceName)
-    defineNameMap[interfaceName] = metaData;
+    // interfaceNames.push(interfaceName)
+    // defineNameMap[interfaceName] = metaData;
     metaDataToDefine(metaData, interfaceName, true)
 }
 
@@ -41,13 +43,13 @@ function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
    return (writer) => {
        if(propertiesValue.allOf) {
            propertiesValue.allOf.forEach((item: {$ref: string}, index: number) => {
-               const refName = formatName(formatRef(item.$ref))
+               const refName = formatRef(item.$ref)
                writer.write(`${index !== 0 ? '&' : ''}${refName}`)
            })
            return
        }
        if(propertiesValue.$ref) {
-           writer.write(formatName(formatRef(propertiesValue.$ref)))
+           writer.write(formatRef(propertiesValue.$ref))
            return;
        }
        switch (propertiesValue.type) {
@@ -58,8 +60,9 @@ function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
            case "string":
                return writer.write("string")
            case "array":
-               typeWriterFnCreator(propertiesValue.items)(writer);
-               return
+               return typeWriterFnCreator(propertiesValue.items)(writer);
+           default:
+               console.log('miss propertiesValue.type', propertiesValue.type)
        }
    }
 }
@@ -76,29 +79,39 @@ function metaDataToDefine(metaData: any, name: string, isExported = false) {
                     const propertiesValue = metaData.properties[propertiesKey];
                     interfaceDefine.addProperty({
                         name: propertiesKey,
-                        type: typeWriterFnCreator(propertiesValue)
+                        type: typeWriterFnCreator(propertiesValue),
+                        // trailingTrivia: propertiesValue.description,
+                        leadingTrivia: `/** ${propertiesValue.description} */\n`,
+                        hasQuestionToken: !propertiesValue.required?.includes(propertiesKey),
                     })
                 }
             }
             return
         case "string":
             if(metaData.enum) {
-                definitionsFile.addEnum({
+                const enumDefine = definitionsFile.addEnum({
+                    isExported,
                     name,
-                    members: metaData.enum?.map((value: string, index: number) => ({name: metaData["x-enum-varnames"][index] ?? value, value})),
                 });
+                for (let i = 0; i < metaData.enum.length; i++) {
+                    const value =  metaData.enum[i];
+                    enumDefine.addMember({
+                        name: metaData["x-enum-varnames"][i] ?? value,
+                        value,
+                    })
+                }
                 return
             }
             console.log("metaData", metaData)
             return
         default:
-            console.log('miss', metaData.type)
+            console.log('miss metaData.type', metaData.type)
     }
 
 }
 
 
-
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 definitionsFile.saveSync();
 
