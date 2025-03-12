@@ -1,4 +1,4 @@
-import {NewLineKind, Project, WriterFunction} from "ts-morph";
+import {NewLineKind, Project, StructureKind, WriterFunction} from "ts-morph";
 import data from "./data.json"
 
 const project = new Project({
@@ -22,50 +22,98 @@ const definitionsFile = project.createSourceFile(caseFileName('demo1'), "", {
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// const defineNameMap: Record<string, any> = {};
+definitionsFile.addImportDeclaration({
+    namedImports: ['apiFetch'],
+    moduleSpecifier: '@/utils/index'
+})
 
-const formatName = (name: string) => name.replace(".", "_")
 
-const formatRef = (ref: string) => formatName(ref.replace('#/definitions/', ''));
 
-// const interfaceNames: string[] = []
+function formatName (name: string){
+    return name.replace(".", "_")
+}
 
-for (const definitionsKey in data.definitions) {
-    const interfaceName = formatName(definitionsKey);
-    // @ts-ignore
-    const metaData = data.definitions[definitionsKey] as any
-    // interfaceNames.push(interfaceName)
-    // defineNameMap[interfaceName] = metaData;
-    metaDataToDefine(metaData, interfaceName, true)
+function formatRef  (ref: string) {
+    return formatName(ref.replace('#/definitions/', ''))
 }
 
 function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
-   return (writer) => {
-       if(propertiesValue.allOf) {
-           propertiesValue.allOf.forEach((item: {$ref: string}, index: number) => {
-               const refName = formatRef(item.$ref)
-               writer.write(`${index !== 0 ? '&' : ''}${refName}`)
-           })
-           return
-       }
-       if(propertiesValue.$ref) {
-           writer.write(formatRef(propertiesValue.$ref))
-           return;
-       }
-       switch (propertiesValue.type) {
-           case "boolean":
-               return writer.write("boolean")
-           case "integer":
-               return writer.write("number")
-           case "string":
-               return writer.write("string")
-           case "array":
-               return typeWriterFnCreator(propertiesValue.items)(writer);
-           default:
-               console.log('miss propertiesValue.type', propertiesValue.type)
-       }
-   }
+    return (writer) => {
+        if(propertiesValue.allOf) {
+            propertiesValue.allOf.forEach((item: {$ref: string}, index: number) => {
+                const refName = formatRef(item.$ref)
+                writer.write(`${index !== 0 ? '&' : ''}${refName}`)
+            })
+            return
+        }
+        if(propertiesValue.$ref) {
+            writer.write(formatRef(propertiesValue.$ref))
+            return;
+        }
+        switch (propertiesValue.type) {
+            case "boolean":
+                return writer.write("boolean")
+            case "integer":
+                return writer.write("number")
+            case "string":
+                return writer.write("string")
+            case "array":
+                typeWriterFnCreator(propertiesValue.items)(writer)
+                return writer.write("[]");
+            case "object":
+                if(propertiesValue.properties) {
+                    writer.write("{");
+                    for (const propertiesKey  in propertiesValue.properties) {
+                        const propertiesMeta = propertiesValue.properties[propertiesKey]
+                        writer.write(propertiesKey)
+                        if(!propertiesValue.required?.includes(propertiesKey)) {
+                            writer.write('?')
+                        }
+                        writer.write(":")
+                        typeWriterFnCreator(propertiesMeta)(writer)
+                        writer.write(",")
+                    }
+                    writer.write("}");
+                    return;
+                }
+                return writer.write("any");
+            default:
+                console.log('miss propertiesValue.type', propertiesValue.type, propertiesValue)
+        }
+    }
 }
+
+function createFetchFunction (apiPath: string, methodType: string, methodMetaData: any) {
+    const functionDefine = definitionsFile.addFunction({
+        name: methodType,
+        isExported: true
+    })
+    functionDefine.addParameter({
+        name: 'options',
+        type: "Record<string, any>"
+    })
+    functionDefine.addParameter({
+        name: 'extraOptions',
+        type: 'any'
+    })
+    functionDefine.setBodyText((writer) => {
+        writer.write(`return apiFetch<`)
+        // any
+        const responseMetaData = methodMetaData.responses?.['200']?.schema;
+        if(responseMetaData) {
+            typeWriterFnCreator(responseMetaData)(writer)
+        } else {
+            writer.write('any')
+        }
+        writer.write(`>({
+            url: "${apiPath}",
+            method: "${methodType}",
+            ...options,
+        }, extraOptions)`)
+    })
+
+}
+
 
 function metaDataToDefine(metaData: any, name: string, isExported = false) {
     switch (metaData.type) {
@@ -110,8 +158,26 @@ function metaDataToDefine(metaData: any, name: string, isExported = false) {
 
 }
 
+for (const apiPath in data.paths) {
+    // @ts-ignore
+    let methodMetaDataMap = data.paths[apiPath]
+    for (const methodType in methodMetaDataMap) {
+        const fullApiPath = data.basePath + apiPath
+        createFetchFunction(fullApiPath, methodType, methodMetaDataMap[methodType])
+    }
+}
+
+for (const definitionsKey in data.definitions) {
+    const interfaceName = formatName(definitionsKey);
+    // @ts-ignore
+    const metaData = data.definitions[definitionsKey] as any
+    metaDataToDefine(metaData, interfaceName, true)
+}
+
+
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+definitionsFile.formatText()
 definitionsFile.saveSync();
 
