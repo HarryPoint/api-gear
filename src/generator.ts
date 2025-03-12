@@ -254,7 +254,7 @@ export async function generator(options:{ definitionsFile: SourceFile, data: any
 
     if(mode === 'method' && interfacePath) {
         definitionsFile.addImportDeclaration({
-            namedImports: interfaceCollector,
+            namedImports: Array.from(new Set(interfaceCollector)),
             moduleSpecifier: interfacePath
         })
     }
