@@ -14,7 +14,7 @@ function formatName (name: string){
     return name
             .split(/\W/)
             .map(_.upperFirst)
-            .join("");
+            .join("_");
 }
 
 function formatRef  (ref: string) {
@@ -48,10 +48,10 @@ function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writ
 }
 
 
-export async function generator(options:{ definitionsFile: SourceFile, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string, fetchMethodPath?: string }) {
+export async function generator(options:{ definitionsFile: SourceFile, route?: string, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string, fetchMethodPath?: string }) {
     const interfaceCollector: string[] = [];
 
-    const {definitionsFile, data, mode = 'all', interfacePath = "@/autoApi/types", fetchMethodPath = "@/common/utils/axios"} = options;
+    const {definitionsFile, data, mode = 'all', route = 'swagger/index.html#',  interfacePath = "@/autoApi/types", fetchMethodPath = "@/common/utils/axios"} = options;
 
 
     function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
@@ -109,11 +109,23 @@ export async function generator(options:{ definitionsFile: SourceFile, data: any
             name: methodNameUpperCase,
             isExported: true
         })
+
+        // const author = methodDefine?.["x-author"] || "";
+        // const desc = methodDefine?.["summary"] || "";
         functionDefine.addJsDoc({
             description: methodMetaData.description,
             tags: [{
+                tagName: 'author',
+                text: `${methodMetaData['x-author'] ?? ''}`
+            }, {
+                tagName: 'desc',
+                text: `${methodMetaData['summary'] ?? ''}`
+            },{
                 tagName: 'link',
-                text: `${data.host}${apiPath}`
+                text: `${data.host}/${route}/${methodMetaData?.tags?.join?.('_') ?? ''}/${methodType}${apiPath.split(/\W/)?.join('_')}`
+            },{
+                tagName: 'host',
+                text: data.host
             }]
         })
         functionDefine.addParameter({

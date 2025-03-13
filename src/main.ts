@@ -53,6 +53,7 @@ const fetchData = async (
   const data = config.sort ? sortData(originData) : originData;
 
   const baseData = _.pick(data, ["basePath", "host", "info", "swagger"]);
+  console.log(baseData);
 
   const interfacePath = path.join(basePath, 'types.ts');
 

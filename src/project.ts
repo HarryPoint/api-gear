@@ -39,6 +39,7 @@ export const createJsonFile = async (
   filePath: string,
   data: any
 ) => {
+
   const definitionsFile = project.createSourceFile(
     filePath,
     JSON.stringify(data, null, 2),
