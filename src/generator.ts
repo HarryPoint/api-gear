@@ -164,7 +164,8 @@ export async function generator(options:{ definitionsFile: SourceFile, data: any
         })
         functionDefine.addParameter({
             name: 'extraOptions',
-            type: 'any'
+            type: 'any',
+            hasQuestionToken: true
         })
         functionDefine.setBodyText((writer) => {
             writer.write(`return apiFetch<`)
@@ -176,10 +177,10 @@ export async function generator(options:{ definitionsFile: SourceFile, data: any
                 writer.write('any')
             }
             writer.write(`>({
-            url: "${apiPath}",
-            method: "${methodNameUpperCase}",
-            ...options,
-        }, extraOptions)`)
+                url: "${apiPath}",
+                method: "${methodNameUpperCase}",
+                ...options,
+            }, extraOptions)`)
         })
 
     }
