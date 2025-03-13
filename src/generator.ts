@@ -1,4 +1,5 @@
 import {CodeBlockWriter, SourceFile, WriterFunction} from "ts-morph";
+import _ from "lodash";
 
 type IParametersItem = {
     in: 'body' | 'query',
@@ -10,7 +11,10 @@ type IParametersItem = {
 
 
 function formatName (name: string){
-    return name.replace(".", "_")
+    return name
+            .split(/\W/)
+            .map(_.upperFirst)
+            .join("");
 }
 
 function formatRef  (ref: string) {
