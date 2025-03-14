@@ -99,6 +99,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                     return writer.write("any");
                 default:
                     console.log('miss propertiesValue.type', propertiesValue.type, propertiesValue)
+                    return writer.write("any");
             }
         }
     }
