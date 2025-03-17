@@ -153,7 +153,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                         if(keyCount) {
                             writer.write(",")
                         }
-                        writer.write("query:")
+                        writer.write("params:")
                         objectWriter<IParametersItem>(queryArr, (writer, item) => {
                             writer.write(`${item.name}${item.required ? '' : '?'}: `)
                             typeWriterFnCreator(item)(writer)
