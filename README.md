@@ -8,7 +8,7 @@ By using api-gear, you can greatly improve development efficiency, reduce errors
 
 English | [简体中文](./README.zh-CN.md)
 
-### 适用场景
+### Application scenario
 1. swagger generates request code.
 2. swagger generates interfaces and enums
 
