@@ -8,12 +8,20 @@ api-gear 是一个高效的工程化工具，它可以将 Swagger（v2版本） 
 
 [English](./README.md) | 简体中文
 
+### 适用场景
+1. swagger 生成接口请求代码 
+2. swagger 生成 interface 和 enum 
+
 ### 主要特性
 
 1. 自动化：只需一次设置，就可以自动将后端的 Swagger 文档转换为 TypeScript 文件。
 2. 准确性：通过直接从 Swagger 文档生成类型定义，可以确保前后端接口的类型一致性。
 3. 高效率：消除了手动编写和更新类型定义的需求，从而大大提高了开发效率。
 4. 便捷性：可以作为命令行工具直接转换swagger数据为 TypeScript 文件，同时支持转换后清除swagger JSON 数据文件。
+5. 轻量化：生成的代码内容没有自带请求方法，可以轻松集成到已有项目中，就像你手写代码一样。
+6. 定制化：extraOptions 可以满足你的自定义需求，这个参数工具内不会使用。
+
+> 后续可能给出更多定制方案，但是目前工具只做一件事，swagger 转化为 ts
 
 ### 如何开始
 
@@ -32,7 +40,7 @@ module.exports = () => {
   return {
     output: path.resolve(__dirname, "./autoApi"),
     serviceMap: {
-      yourServiceName: "your api path",
+      yourServiceName: "your api path", // XXX/swagger/doc.json (json)
     },
   };
 };
@@ -79,34 +87,64 @@ npx api-gear --help
 
 结果示例
 ```javascript
-import { apiFetch } from "@/utils/index";
-import { dto_ListDriversResponse, dto_DriverDetail, dto_DriverDetail } from "../../types";
+// file:  src/autoApi/api/v1/product/index.ts
+import { apiFetch } from "@/common/utils/axios";
+import { Rest_Response_Dto_PaginationResponse_Ent_Products, Ent_Products, Rest_Response_Ent_Products } from "@/autoApi/types";
 
 /**
- * 获取 RentalApplication Driver 列表
- * @link /api/v1/rental-application/driver
+ * 获取 Product 列表
+ * @author
+ * @desc 获取 Product 列表
+ * @link https://xxxx/swagger/index.html#/product/get_api_v1_product
+ * @host https://xxx
  */
-export function GET(options: { query: { search?: string, page_num?: number, page_size?: number, filter?: string } }, extraOptions: any) {
-    return apiFetch<dto_ListDriversResponse>({
-        url: "/api/v1/rental-application/driver",
+export function GET(options: { params: { page_num?: number, page_size?: number, field?: string, op?: string, value?: string } }, extraOptions?: any) {
+    return apiFetch<Rest_Response_Dto_PaginationResponse_Ent_Products>({
+        url: "/api/v1/product",
         method: "GET",
         ...options,
     }, extraOptions)
 }
 
 /**
- * 创建 RentalApplication Driver
- * @link /api/v1/rental-application/driver
+ * 创建 Product
+ * @author
+ * @desc 创建 Product
+ * @link https://xxx/swagger/index.html#/product/post_api_v1_product
+ * @host https://xxx
  */
-export function POST(options: { data: { req: dto_DriverDetail } }, extraOptions: any) {
-    return apiFetch<dto_DriverDetail>({
-        url: "/api/v1/rental-application/driver",
+export function POST(options: { data: { product: Ent_Products } }, extraOptions?: any) {
+    return apiFetch<Rest_Response_Ent_Products>({
+        url: "/api/v1/product",
         method: "POST",
         ...options,
     }, extraOptions)
 }
 
 
+
+```
+
+```typescript jsx
+// file: src/autoApi/types.ts
+export interface Rest_Response_Dto_PaginationResponse_Ent_Products {
+    /** xx */
+    code?: number;
+    /** xx */
+    data?: Dto_PaginationResponse_Ent_Products;
+    /** xx */
+    message?: string;
+    /** xx */
+    trace_id?: string;
+}
+
+export enum Users_Source {
+    SourceTEAM = "TEAM",
+    SourceSINGPASS = "SINGPASS",
+    SourceINTERNAL = "INTERNAL"
+}
+
+// ...more
 ```
 
 ### :copyright: License

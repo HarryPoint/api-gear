@@ -8,12 +8,20 @@ By using api-gear, you can greatly improve development efficiency, reduce errors
 
 English | [简体中文](./README.zh-CN.md)
 
+### 适用场景
+1. swagger generates request code.
+2. swagger generates interfaces and enums
+
 ### Main Features
 
 1. Automation: With just one-time setup, you can automatically convert backend Swagger documents into TypeScript files.
 2. Accuracy: By generating type definitions directly from Swagger documents, you can ensure the type consistency of front-end and back-end interfaces.
 3. High Efficiency: The need for manual writing and updating of type definitions is eliminated, greatly improving development efficiency.
 4. Convenience: It can be used as a command-line tool to directly convert Swagger data into TypeScript files, and it also supports clearing Swagger JSON data files after conversion.
+5. Lightweight: The generated code content has no built-in request method and can be easily integrated into existing projects, just as if you were writing code by hand.
+6. Customization: extraOptions can meet your custom needs, and this parameter will not be used in the tool.
+
+> Subsequent versions may provide more customized solutions, but currently the tool only performs one task, converting Swagger to TS.
 
 ### How to Get Started
 
@@ -32,7 +40,7 @@ module.exports = () => {
   return {
     output: path.resolve(__dirname, "./autoApi"),
     serviceMap: {
-      yourServiceName: "your api path",
+        yourServiceName: "your api path", // XXX/swagger/doc.json (json)
     },
   };
 };
@@ -80,33 +88,61 @@ npx api-gear --help
 
 Result Example
 ```javascript
-import { apiFetch } from "@/utils/index";
-import { dto_ListDriversResponse, dto_DriverDetail, dto_DriverDetail } from "../../types";
+// file:  src/autoApi/api/v1/product/index.ts
+import { apiFetch } from "@/common/utils/axios";
+import { Rest_Response_Dto_PaginationResponse_Ent_Products, Ent_Products, Rest_Response_Ent_Products } from "@/autoApi/types";
 
 /**
- * 获取 RentalApplication Driver 列表
- * @link /api/v1/rental-application/driver
+ * 获取 Product 列表
+ * @author
+ * @desc 获取 Product 列表
+ * @link https://xxxx/swagger/index.html#/product/get_api_v1_product
+ * @host https://xxx
  */
-export function GET(options: { query: { search?: string, page_num?: number, page_size?: number, filter?: string } }, extraOptions: any) {
-    return apiFetch<dto_ListDriversResponse>({
-        url: "/api/v1/rental-application/driver",
+export function GET(options: { params: { page_num?: number, page_size?: number, field?: string, op?: string, value?: string } }, extraOptions?: any) {
+    return apiFetch<Rest_Response_Dto_PaginationResponse_Ent_Products>({
+        url: "/api/v1/product",
         method: "GET",
         ...options,
     }, extraOptions)
 }
 
 /**
- * 创建 RentalApplication Driver
- * @link /api/v1/rental-application/driver
+ * 创建 Product
+ * @author
+ * @desc 创建 Product
+ * @link https://xxx/swagger/index.html#/product/post_api_v1_product
+ * @host https://xxx
  */
-export function POST(options: { data: { req: dto_DriverDetail } }, extraOptions: any) {
-    return apiFetch<dto_DriverDetail>({
-        url: "/api/v1/rental-application/driver",
+export function POST(options: { data: { product: Ent_Products } }, extraOptions?: any) {
+    return apiFetch<Rest_Response_Ent_Products>({
+        url: "/api/v1/product",
         method: "POST",
         ...options,
     }, extraOptions)
 }
 
+
+```
+
+```typescript jsx
+// file: src/autoApi/types.ts
+export interface Rest_Response_Dto_PaginationResponse_Ent_Products {
+    /** xx */
+    code?: number;
+    /** xx */
+    data?: Dto_PaginationResponse_Ent_Products;
+    /** xx */
+    message?: string;
+    /** xx */
+    trace_id?: string;
+}
+
+export enum Users_Source {
+    SourceTEAM = "TEAM",
+    SourceSINGPASS = "SINGPASS",
+    SourceINTERNAL = "INTERNAL"
+}
 ```
 
 ### :copyright: License
