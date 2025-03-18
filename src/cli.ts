@@ -34,7 +34,7 @@ function cleanOptions(options: any): IConfig {
   ret.translate && (ret.translate = ret.translate === "true");
   ret.json && (ret.createJsonFile = ret.json === "true");
   delete ret.json;
-  ret.ts && (ret.createTsFile = ret.ts === "false" ? false : true);
+  ret.ts && (ret.createTsFile = ret.ts !== "false");
   delete ret.ts;
   if (typeof ret.nlk === "string") {
     ret.newLineKind = ret.nlk as "CRLF" | "LF";
@@ -75,24 +75,24 @@ cli
     "--config <string>",
     `[string] config file path (default: "api-gear.config.js")`
   )
-  .option(
-    "--translate <boolean>",
-    `[boolean] translate Chinese to English (default: false)`
-  )
+  // .option(
+  //   "--translate <boolean>",
+  //   `[boolean] translate Chinese to English (default: false)`
+  // )
   .option(
     "--json <boolean>",
     `[boolean] generate JSON file based on the interface information (default: false)`
   )
-  .option(
-    "--ts <boolean>",
-    `[boolean] generate TS file based on the interface information (default: true)`
-  )
+  // .option(
+  //   "--ts <boolean>",
+  //   `[boolean] generate TS file based on the interface information (default: true)`
+  // )
   .option("--nlk <string>", `["CRLF" | "LF] new line kind (default: "CRLF")`)
   .option("--sort <boolean>", `[boolean] sort the result (default: false)`)
-  .option(
-    "--type <string>",
-    `["transform" | "clear"] chose work mode, transform will generate ts/json file, clear will clear the data file(default: transform)`
-  )
+  // .option(
+  //   "--type <string>",
+  //   `["transform" | "clear"] chose work mode, transform will generate ts/json file, clear will clear the data file(default: transform)`
+  // )
   .option(
     "--platform <string>",
     `[string] if the options is set, the other platform will be ignored`

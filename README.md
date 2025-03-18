@@ -37,12 +37,17 @@ npm install api-gear -D
 const path = require("path");
 
 module.exports = () => {
-  return {
-    output: path.resolve(__dirname, "./autoApi"),
-    serviceMap: {
-        yourServiceName: "your api path", // XXX/swagger/doc.json (json)
-    },
-  };
+    return {
+        output: path.resolve(__dirname, "./autoApi"),
+        serviceMap: {
+            yourServiceName: "your api path", // XXX/swagger/doc.json (json)
+        },
+        // if you need auth
+        auth: {
+            username: "xxx",
+            password: "xx",
+        },
+    };
 };
 ```
 

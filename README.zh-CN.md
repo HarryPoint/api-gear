@@ -42,6 +42,11 @@ module.exports = () => {
     serviceMap: {
       yourServiceName: "your api path", // XXX/swagger/doc.json (json)
     },
+    // if you need auth
+    auth: {
+      username: "xxx",
+      password: "xx",
+    },
   };
 };
 ```
