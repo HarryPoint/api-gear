@@ -6,6 +6,8 @@ import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
 import { createJsonFile, main as createProject, createTsFile } from "./project";
 import { transform } from "./transform";
 import {typeFileGenerator} from "./typeFileGenerator";
+import {processBar} from "./processBar";
+import {log} from "./log"
 
 const sortData = (data: any): any => {
   if (Array.isArray(data)) {
@@ -41,7 +43,7 @@ const fetchData = async (
   apiUri: string,
   prefix: string = "./"
 ) => {
-  console.log("apiUri: ", apiUri);
+  log.info("apiUri: ", apiUri);
   if (!apiUri) {
     throw new Error("apiUri not found");
   }
@@ -88,6 +90,7 @@ const fetchData = async (
       },
     ] as [string, any];
   });
+  processBar.start(openJsonArr.length, 1);
   for (let [pathStr, jsonData] of openJsonArr) {
     const filePath = path.join(basePath, pathStr);
     const apiPath = filePath.replace(basePath, path.sep);
@@ -102,7 +105,13 @@ const fetchData = async (
     if (config.createJsonFile) {
       await createJsonFile(config, project, jsonFilePath, jsonData);
     }
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100)
+    })
+    processBar.increment();
+    log.success(`${apiPath} update success`);
   }
+  processBar.stop();
 };
 
 export const main = async (org_config: IConfig) => {

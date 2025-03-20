@@ -13,6 +13,7 @@
 - [适用场景](#适用场景)
 - [主要特性](#主要特性)
 - [快速开始](#快速开始)
+- [变量支持](#变量支持)
 - [配置说明](#配置说明)
 - [生成示例](#生成示例)
 - [License](#License)
@@ -64,6 +65,25 @@ module.exports = () => {
 };
 ```
 
+### 编写`apiFetch`方法
+
+```typescript
+import axios from "axios";
+
+export const apiFetch = <T = any>(options: {url: string, method: "GET" | "POST" | "PUT" | "DELETE", path?: Record<string, string>, params?: Record<string, any>, data?: Record<string, any>}, extraOptions?: any ) => {
+    let { path = {}, url = "", method, params, data} = options;
+    Object.keys(path).forEach((key) => {
+        url = url?.replace(new RegExp(`{${key}}`, 'g'), path[key] ?? '');
+    });
+    return axios<T>({
+        url,
+        method,
+        params,
+        data
+    })
+}
+```
+
 ### 在项目内的`package.json`中配置命令
 
 ```json
@@ -80,18 +100,17 @@ module.exports = () => {
 npm run api
 ```
 
+## 变量支持
 
-## 配置说明
-
-| 选项名称              |                        描述                        |                           类型                           |                                    默认值 |
-|:------------------|:------------------------------------------------:|:------------------------------------------------------:|---------------------------------------:|
-| output            |                   文件生成目录(完整路径)                   |                         string                         | path.join(process.cwd(), "./api-gear") |
-| serviceMap        |                     需要转换的服务                      |                 Record<string, string>                 |                                   null |
-| serviceNameToPath |                  是否根据服务名称添加子级目录                  |                        boolean                         |                                  false |
-| newLineKind       |                       行尾序列                       |                      'CRLF'\|'LF'                      |                   'LF'( --nlk=CRLF 修改) |
-| sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                        boolean                         |                 false (--sort=true 修改) |
-| pathFilter        |                 过滤目标项（用于更新单个接口）                  |               (path: string) => boolean                |                             () => true |
-| auth              |                    Bear Auth                     | (path: string) => {username: string, password: string} |                              undefined |
+当接口文档的url地址存在变量时，在使用方使用生成的请求函数支持`path`参数传输变量值
+例如：
+接口地址为： /api/accident/{id}
+请求方式为： GET
+使用方式：
+```typescript jsx
+import {GET} from "@/autoApi/api/accident/{id}"
+GET({path: {id: '数据id'}})
+```
 
 ## 生成示例
 
@@ -155,6 +174,18 @@ export enum Users_Source {
 
 // ...more
 ```
+
+## 配置说明
+
+| 选项名称              |                        描述                        |                           类型                           |                                    默认值 |
+|:------------------|:------------------------------------------------:|:------------------------------------------------------:|---------------------------------------:|
+| output            |                   文件生成目录(完整路径)                   |                         string                         | path.join(process.cwd(), "./api-gear") |
+| serviceMap        |                     需要转换的服务                      |                 Record<string, string>                 |                                   null |
+| serviceNameToPath |                  是否根据服务名称添加子级目录                  |                        boolean                         |                                  false |
+| newLineKind       |                       行尾序列                       |                      'CRLF'\|'LF'                      |                   'LF'( --nlk=CRLF 修改) |
+| sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                        boolean                         |                 false (--sort=true 修改) |
+| pathFilter        |                 过滤目标项（用于更新单个接口）                  |               (path: string) => boolean                |                             () => true |
+| auth              |                    Bear Auth                     | (path: string) => {username: string, password: string} |                              undefined |
 
 ## License
 
