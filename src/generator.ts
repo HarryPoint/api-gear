@@ -48,10 +48,10 @@ function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writ
 }
 
 
-export async function generator(options:{ definitionsFile: SourceFile, route?: string, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string, fetchMethodPath?: string }) {
+export async function generator(options:{ definitionsFile: SourceFile, route?: string, data: any, mode?: 'all' | 'method' | 'interface', interfacePath?: string, fetchMethodPath?: string, fetchMethodName?:string }) {
     const interfaceCollector: string[] = [];
 
-    const {definitionsFile, data, mode = 'all', route = 'swagger/index.html#',  interfacePath = "@/autoApi/types", fetchMethodPath = "@/common/utils/axios"} = options;
+    const {definitionsFile, data, mode = 'all', route = 'swagger/index.html#',  interfacePath = "@/autoApi/types", fetchMethodPath = "@/common/utils/axios", fetchMethodName = "apiFetch"} = options;
 
 
     function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
@@ -185,7 +185,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
             hasQuestionToken: true
         })
         functionDefine.setBodyText((writer) => {
-            writer.write(`return apiFetch<`)
+            writer.write(`return ${fetchMethodName}<`)
             // any
             const responseMetaData = methodMetaData.responses?.['200']?.schema;
             if(responseMetaData) {
@@ -256,7 +256,8 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
             }
         }
         definitionsFile.addImportDeclaration({
-            namedImports: ['apiFetch'],
+            namedImports: [fetchMethodName],
+            // defaultImport: fetchMethodName,
             moduleSpecifier: fetchMethodPath
         })
     }

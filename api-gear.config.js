@@ -28,6 +28,9 @@ module.exports = () => {
   return {
     output: path.resolve(__dirname, "./openapi"),
     serviceMap: apiMap.sit,
+    interfaceFileName: 'typesssss.ts',
+    fetchMethodPath: '@/fetchMethodPath',
+    fetchMethodName: 'fetchMethodName',
     translate: true,
     sort: true,
     auth: {

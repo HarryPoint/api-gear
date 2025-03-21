@@ -3,9 +3,7 @@ import _ from "lodash";
 import path from "path";
 import { Project } from "ts-morph";
 import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
-import { createJsonFile, main as createProject, createTsFile } from "./project";
-import { transform } from "./transform";
-import {typeFileGenerator} from "./typeFileGenerator";
+import { createProject, createJsonFile, createTsFile, createInterfaceFile } from "./project";
 import {processBar} from "./processBar";
 import {log} from "./log"
 
@@ -39,10 +37,13 @@ const findOriginalRef = (pathItem: any): string[] => {
 
 const fetchData = async (
   config: IConfig,
-  project: Project,
-  apiUri: string,
-  prefix: string = "./"
+  options: {
+    project: Project,
+    apiUri: string,
+    prefix: string
+  }
 ) => {
+  let {apiUri, prefix, project} = options;
   log.info("apiUri: ", apiUri);
   if (!apiUri) {
     throw new Error("apiUri not found");
@@ -55,11 +56,10 @@ const fetchData = async (
   const data = config.sort ? sortData(originData) : originData;
 
   const baseData = _.pick(data, ["basePath", "host", "info", "swagger"]);
-  console.log(baseData);
 
-  const interfacePath = path.join(basePath, 'types.ts');
+  const interfaceFilePath = path.join(basePath, config.interfaceFileName);
 
-  await typeFileGenerator({project, filePath: interfacePath, data})
+  await createInterfaceFile(config, {project, filePath: interfaceFilePath, data})
 
   const createDefinitions = (
       target: any,
@@ -100,7 +100,15 @@ const fetchData = async (
       continue;
     }
     if (config.createTsFile) {
-      await createTsFile(config, project, tsFilePath, jsonData);
+      const interfacePathWithExt = path.relative(filePath, interfaceFilePath)
+      const ext = path.extname(interfacePathWithExt);
+      const interfacePath = interfacePathWithExt.replace(ext, '')
+      await createTsFile(config, {
+        project,
+        filePath: tsFilePath,
+        data: jsonData,
+        interfacePath
+      });
     }
     if (config.createJsonFile) {
       await createJsonFile(config, project, jsonFilePath, jsonData);
@@ -118,16 +126,18 @@ export const main = async (org_config: IConfig) => {
   setRunTimeConfig(org_config);
   let config = getRunTimeConfig();
   const project = await createProject(config);
-  if (config.transform || config.clearJsonFile) {
-    return transform(config, project, config.output);
-  }
+  // if (config.transform || config.clearJsonFile) {
+  //   return transform(config, project, config.output);
+  // }
   for (const key in config.serviceMap) {
     const apiUri = config.serviceMap[key as keyof typeof config.serviceMap];
     await fetchData(
       config,
-      project,
-      apiUri,
-      config.serviceNameToPath ? key : "./"
+        {
+          project,
+          apiUri,
+          prefix: config.serviceNameToPath ? key : "./"
+        }
     );
   }
 };

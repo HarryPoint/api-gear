@@ -8,8 +8,9 @@ import {
 } from "./template";
 
 export type IConfig = {
-  interfacePath: string;
+  interfaceFileName: string;
   fetchMethodPath: string;
+  fetchMethodName: string;
   // -----------
   interfacePrefix: string;
   enumPrefix: string;
@@ -48,8 +49,9 @@ export type IConfig = {
 const output = path.join(process.cwd(), "./api-gear");
 
 export const defaultConfig: IConfig = {
-  interfacePath: '@/autoApi/types',
+  interfaceFileName: 'types.ts',
   fetchMethodPath: '@/common/utils/axios',
+  fetchMethodName: "apiFetch",
   // ----------
   translate: false,
   translateCacheFileName: "translateCache.json",
@@ -63,7 +65,7 @@ export const defaultConfig: IConfig = {
   serviceMap: {},
   serviceNameToPath: false,
   createTsFile: true,
-  createJsonFile: true,
+  createJsonFile: false,
   clearJsonFile: false,
   newLineKind: "LF",
   sort: false,

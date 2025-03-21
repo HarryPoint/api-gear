@@ -3,7 +3,7 @@ import { IConfig } from "./config";
 import { createDefinitions } from "./createDefinitions";
 import {generator} from "./generator";
 
-export const main = async (config: IConfig) => {
+export const createProject = async (config: IConfig) => {
   const project = new Project({
     // Optionally specify compiler options, tsconfig.json, in-memory file system, and more here.
     // If you initialize with a tsconfig.json, then it will automatically populate the project
@@ -22,14 +22,18 @@ export const main = async (config: IConfig) => {
 
 export const createTsFile = async (
   config: IConfig,
-  project: Project,
-  filePath: string,
-  data: any
+  options: {
+    project: Project,
+    filePath: string,
+    interfacePath: string,
+    data: any
+  }
 ) => {
+  let {data, filePath, interfacePath, project} = options;
   const definitionsFile = project.createSourceFile(filePath, "", {
     overwrite: true,
   });
-  await generator({definitionsFile, data, mode: 'method', interfacePath: config.interfacePath, fetchMethodPath: config.fetchMethodPath})
+  await generator({definitionsFile, data, mode: 'method', interfacePath,  fetchMethodPath: config.fetchMethodPath, fetchMethodName: config.fetchMethodName})
   definitionsFile.saveSync();
 };
 
@@ -49,3 +53,13 @@ export const createJsonFile = async (
   );
   definitionsFile.saveSync();
 };
+
+
+export const createInterfaceFile = async (config: IConfig, options: {project: Project, filePath: string, data: any}) => {
+  let {filePath, project, data} = options;
+  const definitionsFile = project.createSourceFile(filePath, "", {
+    overwrite: true,
+  });
+  await generator({definitionsFile, data, mode: 'interface'})
+  definitionsFile.saveSync();
+}
