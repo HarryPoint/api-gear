@@ -44,13 +44,14 @@ const fetchData = async (
   }
 ) => {
   let {apiUri, prefix, project} = options;
-  log.info("apiUri: ", apiUri);
   if (!apiUri) {
     throw new Error("apiUri not found");
   }
+  log.info("step1: fetch data")
   const { data: originData } = await axios.get(`${apiUri}`, {
     auth: config.auth,
   });
+  log.info("step2: Data analysis")
   const basePath = path.join(config.output, prefix);
 
   const data = config.sort ? sortData(originData) : originData;
@@ -90,6 +91,7 @@ const fetchData = async (
       },
     ] as [string, any];
   });
+  log.info("step3: Generating code")
   processBar.start(openJsonArr.length, 0);
   for (let [pathStr, jsonData] of openJsonArr) {
     const filePath = path.join(basePath, pathStr);
@@ -120,6 +122,7 @@ const fetchData = async (
     // log.success(`   ${apiPath} update success`);
   }
   processBar.stop();
+  log.info("step4: success")
 };
 
 export const main = async (org_config: IConfig) => {
