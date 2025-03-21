@@ -1,7 +1,9 @@
 import cliProgress from "cli-progress";
 
 // create a new progress bar instance and use shades_classic theme
-export const processBar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
+export const processBar = new cliProgress.SingleBar({
+    format: ' {bar} | {value}/{total} | {filename}',
+}, cliProgress.Presets.rect);
 
 // processBar.start(100, 1)
 // start the progress bar with a total value of 200 and start value of 0

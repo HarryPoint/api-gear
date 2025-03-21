@@ -90,7 +90,7 @@ const fetchData = async (
       },
     ] as [string, any];
   });
-  processBar.start(openJsonArr.length, 1);
+  processBar.start(openJsonArr.length, 0);
   for (let [pathStr, jsonData] of openJsonArr) {
     const filePath = path.join(basePath, pathStr);
     const apiPath = filePath.replace(basePath, path.sep);
@@ -108,8 +108,8 @@ const fetchData = async (
     await new Promise((resolve) => {
       setTimeout(resolve, 100)
     })
-    processBar.increment();
-    log.success(`${apiPath} update success`);
+    processBar.increment({filename: apiPath})
+    // log.success(`   ${apiPath} update success`);
   }
   processBar.stop();
 };
