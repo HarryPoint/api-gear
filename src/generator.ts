@@ -17,8 +17,12 @@ function formatName (name: string){
             .join("_");
 }
 
-function formatRef  (ref: string) {
-    return formatName(ref.replace('#/definitions/', ''))
+function formatPropertyName(name: string) {
+    return /\W/.test(name) ? `"${name}"` : name;
+}
+
+function formatRef(ref: string) {
+    return formatName(ref?.replace('#/definitions/', '') ?? "")
 }
 
 function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writer: CodeBlockWriter, item: T, index: number, key?: string) => void ):WriterFunction {
@@ -57,10 +61,9 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
     function typeWriterFnCreator (propertiesValue: any ): WriterFunction {
         return (writer) => {
             if(propertiesValue.allOf) {
-                propertiesValue.allOf.forEach((item: {$ref: string}, index: number) => {
-                    const refName = formatRef(item.$ref)
-                    interfaceCollector.push(refName);
-                    writer.write(`${index !== 0 ? '&' : ''}${refName}`)
+                propertiesValue.allOf.forEach((item: any, index: number) => {
+                    writer.write(`${index !== 0 ? '&' : ''}`)
+                    typeWriterFnCreator(item)(writer)
                 })
                 return
             }
@@ -78,6 +81,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                 case "boolean":
                     return writer.write("boolean")
                 case "integer":
+                case "number":
                     return writer.write("number")
                 case "string":
                     return writer.write("string")
@@ -87,7 +91,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                 case "object":
                     if(propertiesValue.properties) {
                         objectWriter(propertiesValue.properties, (writer, item, _index, key) => {
-                            writer.write(key as string)
+                            writer.write(formatPropertyName(key as string))
                             if(!propertiesValue.required?.includes(key)) {
                                 writer.write('?')
                             }
@@ -214,7 +218,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                     for (const propertiesKey in metaData.properties) {
                         const propertiesValue = metaData.properties[propertiesKey];
                         interfaceDefine.addProperty({
-                            name: propertiesKey,
+                            name: formatPropertyName(propertiesKey),
                             type: typeWriterFnCreator(propertiesValue),
                             // trailingTrivia: propertiesValue.description,
                             leadingTrivia: `/** ${propertiesValue.description} */\n`,
@@ -232,7 +236,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                     for (let i = 0; i < metaData.enum.length; i++) {
                         const value =  metaData.enum[i];
                         enumDefine.addMember({
-                            name: metaData["x-enum-varnames"][i] ?? value,
+                            name: metaData["x-enum-varnames"]?.[i] ?? value,
                             value,
                         })
                     }
@@ -251,7 +255,8 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
             // @ts-ignore
             let methodMetaDataMap = data.paths[apiPath]
             for (const methodType in methodMetaDataMap) {
-                const fullApiPath = data.basePath + apiPath
+                const fullApiPathOrigin = data.basePath + apiPath
+                const fullApiPath = fullApiPathOrigin.replace(/\/\//g, '/')
                 createFetchFunction(fullApiPath, methodType, methodMetaDataMap[methodType])
             }
         }

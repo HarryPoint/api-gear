@@ -27,7 +27,11 @@ module.exports = () => {
   console.log("argv.platform: ", argv.platform, apiMap.dev);
   return {
     output: path.resolve(__dirname, "./openapi"),
-    serviceMap: apiMap.sit,
+    // serviceMap: apiMap.sit,
+    serviceMap: {
+      "admin-portal": "http://127.0.0.1:8080/app.swagger.json"
+    },
+    createJsonFile: true,
     interfaceFileName: 'typesssss.ts',
     fetchMethodPath: '@/fetchMethodPath',
     fetchMethodName: 'fetchMethodName',
