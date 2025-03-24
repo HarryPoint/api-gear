@@ -181,12 +181,29 @@ export enum Users_Source {
 | interfaceFileName            |                     类型定义文件名称                     |                         string                         |                               types.ts |
 | fetchMethodPath            |                     请求方法路径地址                     |                         string                         |                   @/common/utils/axios |
 | fetchMethodName            |                      请求方法名称                      |                         string                         |                   apiFetch |
-| serviceMap        |                     需要转换的服务                      |                 Record<string, string>                 |                                   null |
+| serviceMap        |                     需要转换的服务                      |                 Record<string, ServiceMapItem>                 |                                   null |
 | serviceNameToPath |                  是否根据服务名称添加子级目录                  |                        boolean                         |                                  false |
 | newLineKind       |                       行尾序列                       |                      'CRLF'\|'LF'                      |                   'LF'( --nlk=CRLF 修改) |
 | sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                        boolean                         |                 false (--sort=true 修改) |
 | pathFilter        |                 过滤目标项（用于更新单个接口）                  |               (path: string) => boolean                |                             () => true |
 | auth              |                    Bear Auth                     | (path: string) => {username: string, password: string} |                              undefined |
+
+## 类型
+```typescript jsx
+
+export type Auth = {
+    username: string;
+    password: string;
+}
+
+export type ServiceMapItem = string | {
+    url?: string,
+    // 如果提供数据，则会优先使用提供的swagger数据进行转换
+    data?: any,
+    // 当前service发起数据请求时auth的优先顺序为 局部 auth => 全局 auth,
+    auth?: Auth;
+}
+```
 
 ## License
 

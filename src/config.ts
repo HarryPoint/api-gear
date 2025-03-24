@@ -7,6 +7,17 @@ import {
   transformOriginType,
 } from "./template";
 
+export type Auth = {
+  username: string;
+  password: string;
+}
+
+export type ServiceMapItem = string | {
+  url?: string,
+  data?: any,
+  auth?: Auth;
+}
+
 export type IConfig = {
   interfaceFileName: string;
   fetchMethodPath: string;
@@ -21,7 +32,7 @@ export type IConfig = {
   translateAppSecret: string;
   translateChunkSize: number;
   transform: boolean;
-  serviceMap: Record<string, string>;
+  serviceMap: Record<string, ServiceMapItem>;
   serviceNameToPath: boolean;
   output: string;
   createTsFile: boolean;
@@ -40,10 +51,7 @@ export type IConfig = {
   contentTemplate: string;
   headerTemplate: string;
   pathFilter?: (ar: string) => boolean;
-  auth?: {
-    username: string;
-    password: string;
-  };
+  auth?: Auth;
 };
 
 const output = path.join(process.cwd(), "./api-gear");

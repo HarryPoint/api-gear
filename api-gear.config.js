@@ -1,5 +1,6 @@
 const path = require("path");
 const argv = require("yargs").argv;
+const data = require('./demo.json')
 
 const platformMap = {
   sit: "https://sit-phv-admin-service.fms-sit.lylo.tech",
@@ -29,7 +30,9 @@ module.exports = () => {
     output: path.resolve(__dirname, "./openapi"),
     // serviceMap: apiMap.sit,
     serviceMap: {
-      "admin-portal": "http://127.0.0.1:8080/app.swagger.json"
+      "admin-portal": {
+        data,
+      }
     },
     createJsonFile: true,
     interfaceFileName: 'typesssss.ts',

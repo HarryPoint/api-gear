@@ -101,8 +101,12 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                         return;
                     }
                     return writer.write("any");
+                case "null":
+                    return writer.write("any");
                 default:
-                    console.log('miss propertiesValue.type', propertiesValue.type, propertiesValue)
+                    if(propertiesValue.type !== undefined) {
+                        console.log('miss propertiesValue.type', propertiesValue.type, propertiesValue)
+                    }
                     return writer.write("any");
             }
         }

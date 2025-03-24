@@ -2,7 +2,7 @@ import axios from "axios";
 import _ from "lodash";
 import path from "path";
 import { Project } from "ts-morph";
-import { getRunTimeConfig, IConfig, setRunTimeConfig } from "./config";
+import {Auth, getRunTimeConfig, IConfig, ServiceMapItem, setRunTimeConfig} from "./config";
 import { createProject, createJsonFile, createTsFile, createInterfaceFile } from "./project";
 import {processBar} from "./processBar";
 import {log} from "./log"
@@ -39,22 +39,28 @@ const fetchData = async (
   config: IConfig,
   options: {
     project: Project,
-    apiUri: string,
+    apiUri?: string,
+    data?: any,
+    auth?: Auth,
     prefix: string
   }
 ) => {
-  let {apiUri, prefix, project} = options;
-  if (!apiUri) {
-    throw new Error("apiUri not found");
+  let {apiUri, prefix, project, data: configData, auth} = options;
+  if (!(apiUri || configData)) {
+    throw new Error("serviceMap config error");
   }
   log.info("step1: fetch data")
-  const { data: originData } = await axios.get(`${apiUri}`, {
-    auth: config.auth,
-  });
+  if(!configData) {
+    const { data: originData } = await axios.get(`${apiUri}`, {
+      auth: auth ?? config.auth,
+    });
+    configData = originData;
+  }
+
   log.info("step2: Data analysis")
   const basePath = path.join(config.output, prefix);
 
-  const data = config.sort ? sortData(originData) : originData;
+  const data = config.sort ? sortData(configData) : configData;
 
   const baseData = _.pick(data, ["basePath", "host", "info", "swagger"]);
 
@@ -133,12 +139,22 @@ export const main = async (org_config: IConfig) => {
   //   return transform(config, project, config.output);
   // }
   for (const key in config.serviceMap) {
-    const apiUri = config.serviceMap[key as keyof typeof config.serviceMap];
+    const serviceMapElement = config.serviceMap[key as keyof typeof config.serviceMap];
+    let serviceMapItem:ServiceMapItem;
+    if(typeof serviceMapElement === "string") {
+      serviceMapItem = {
+        url: serviceMapElement
+      }
+    } else {
+      serviceMapItem = serviceMapElement
+    }
     await fetchData(
       config,
         {
           project,
-          apiUri,
+          apiUri: serviceMapItem?.url,
+          data: serviceMapItem?.data,
+          auth: serviceMapItem?.auth,
           prefix: config.serviceNameToPath ? key : "./"
         }
     );
