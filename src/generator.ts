@@ -277,10 +277,13 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
     }
 
     if(mode === 'method' && interfacePath) {
-        definitionsFile.addImportDeclaration({
-            namedImports: Array.from(new Set(interfaceCollector)),
-            moduleSpecifier: interfacePath
-        })
+        const namedImports = Array.from(new Set(interfaceCollector))
+        if(namedImports.length) {
+            definitionsFile.addImportDeclaration({
+                namedImports,
+                moduleSpecifier: interfacePath
+            })
+        }
     }
 
     definitionsFile.formatText()
