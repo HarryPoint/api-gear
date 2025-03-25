@@ -177,10 +177,11 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                             writer.write(",")
                         }
                         writer.write("data:")
-                        objectWriter<IParametersItem>(bodyArr, (writer, item) => {
-                            writer.write(`${item.name}${item.required ? '' : '?'}: `)
-                            typeWriterFnCreator(item)(writer)
-                        })(writer)
+                        typeWriterFnCreator(bodyArr[0])(writer)
+                        // objectWriter<IParametersItem>(bodyArr, (writer, item) => {
+                        //     writer.write(`${item.name}${item.required ? '' : '?'}: `)
+                        //     typeWriterFnCreator(item)(writer)
+                        // })(writer)
                         keyCount++;
                     }
                 }
