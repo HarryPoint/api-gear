@@ -2,13 +2,12 @@ import {CodeBlockWriter, SourceFile, WriterFunction} from "ts-morph";
 import _ from "lodash";
 
 type IParametersItem = {
-    in: 'body' | 'query',
+    in: 'body' | 'query' | 'path',
     name: string,
     required: boolean,
     description: string,
     type?:string
 }
-
 
 function formatName (name: string){
     return name
@@ -144,12 +143,15 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                 writer.write("{")
                 // path
                 {
-                    const res = apiPath.match(/{\w+}/g)
-                    if(res && res.length) {
+                    const pathArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'path') ?? []
+                    if(pathArr.length) {
+                        if(keyCount) {
+                            writer.write(",")
+                        }
                         writer.write("path:")
-                        objectWriter(res, (writer, item) => {
-                            const name = item.replace(/[{}]/g, '');
-                            writer.write(`${name}: string`)
+                        objectWriter<IParametersItem>(pathArr, (writer, item) => {
+                            writer.write(`${formatPropertyName(item.name)}${item.required ? '' : '?'}: `)
+                            typeWriterFnCreator(item)(writer)
                         })(writer)
                         keyCount++;
                     }
@@ -163,7 +165,7 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                         }
                         writer.write("params:")
                         objectWriter<IParametersItem>(queryArr, (writer, item) => {
-                            writer.write(`${item.name}${item.required ? '' : '?'}: `)
+                            writer.write(`${formatPropertyName(item.name)}${item.required ? '' : '?'}: `)
                             typeWriterFnCreator(item)(writer)
                         })(writer)
                         keyCount++;
@@ -178,10 +180,6 @@ export async function generator(options:{ definitionsFile: SourceFile, route?: s
                         }
                         writer.write("data:")
                         typeWriterFnCreator(bodyArr[0])(writer)
-                        // objectWriter<IParametersItem>(bodyArr, (writer, item) => {
-                        //     writer.write(`${item.name}${item.required ? '' : '?'}: `)
-                        //     typeWriterFnCreator(item)(writer)
-                        // })(writer)
                         keyCount++;
                     }
                 }
