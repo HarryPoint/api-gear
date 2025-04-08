@@ -205,6 +205,10 @@ export type ServiceMapItem = string | {
 }
 ```
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=HarryPoint/api-gear&type=Date)](https://www.star-history.com/#HarryPoint/api-gear&Date)
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
