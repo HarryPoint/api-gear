@@ -57,6 +57,10 @@ const fetchData = async (
     configData = originData;
   }
 
+  if(configData && typeof configData === 'function') {
+    configData = await configData();
+  }
+
   log.info("step2: Data analysis")
   const basePath = path.join(config.output, prefix);
 

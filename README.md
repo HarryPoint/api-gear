@@ -199,8 +199,8 @@ export type Auth = {
 
 export type ServiceMapItem = string | {
     url?: string,
-    // 如果提供数据，则会优先使用提供的swagger数据进行转换
-    data?: any,
+    // 如果提供数据，则会优先使用提供的swagger数据进行转换, 如果是函数，则会在运行时调用，将返回的数据用于接口转换
+    data?:() => Promise<any> | any,
     // 当前service发起数据请求时auth的优先顺序为 局部 auth => 全局 auth,
     auth?: Auth;
 }
