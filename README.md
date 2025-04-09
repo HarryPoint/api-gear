@@ -53,7 +53,43 @@ module.exports = () => {
     return {
         output: path.resolve(__dirname, "./autoApi"),
         serviceMap: {
+            // 直接放链接地址
             yourServiceName: "your api path", // XXX/swagger/doc.json (json)
+            // 对象配置方法
+            yourServiceName2: {
+                url: "your api path",
+            },
+            // 直接放swagger数据
+            yourServiceName3: {
+                data: {
+                    "paths": {
+                        "/v1/attachment": {
+                            "post": {
+                                "summary": "创建 Attachment",
+                                "deprecated": false,
+                                "description": "创建 Attachment",
+                            }
+                        }
+                    }
+                    // ...
+                }
+            },
+            // 直接放函数
+            yourServiceName3: {
+                data: async () => {
+                    return {
+                        "paths": {
+                            "/v1/attachment": {
+                                "post": {
+                                    "summary": "创建 Attachment",
+                                    "deprecated": false,
+                                    "description": "创建 Attachment",
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
         // if you need auth
         auth: {
