@@ -263,7 +263,7 @@ export async function generator(options: {
             // @ts-ignore
             let methodMetaDataMap = data.paths[apiPath];
             for (const methodType in methodMetaDataMap) {
-                const fullApiPathOrigin = data.basePath + apiPath;
+                const fullApiPathOrigin = `${data.basePath ?? ''}` + apiPath;
                 const fullApiPath = fullApiPathOrigin.replace(/\/\//g, '/');
                 createFetchFunction(fullApiPath, methodType, methodMetaDataMap[methodType]);
             }
