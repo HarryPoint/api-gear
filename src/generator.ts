@@ -55,10 +55,20 @@ export async function generator(options: {
     interfacePath?: string;
     fetchMethodPath?: string;
     fetchMethodName?: string;
+    tagsCreator?: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[];
 }) {
     const interfaceCollector: string[] = [];
 
-    const { definitionsFile, data, mode = 'all', route = 'swagger/index.html#', interfacePath = '@/autoApi/types', fetchMethodPath = '@/common/utils/axios', fetchMethodName = 'apiFetch' } = options;
+    const {
+        definitionsFile,
+        data,
+        mode = 'all',
+        route = 'swagger/index.html#',
+        interfacePath = '@/autoApi/types',
+        fetchMethodPath = '@/common/utils/axios',
+        fetchMethodName = 'apiFetch',
+        tagsCreator = () => [],
+    } = options;
 
     function typeWriterFnCreator(propertiesValue: any): WriterFunction {
         return (writer) => {
@@ -121,27 +131,14 @@ export async function generator(options: {
             isExported: true,
         });
 
-        // const author = methodDefine?.["x-author"] || "";
-        // const desc = methodDefine?.["summary"] || "";
         functionDefine.addJsDoc({
-            description: methodMetaData.description,
+            description: methodMetaData.summary,
             tags: [
                 {
-                    tagName: 'author',
-                    text: `${methodMetaData['x-author'] ?? ''}`,
-                },
-                {
                     tagName: 'desc',
-                    text: `${methodMetaData['summary'] ?? ''}`,
+                    text: `${methodMetaData['description'] ?? ''}`,
                 },
-                {
-                    tagName: 'link',
-                    text: `${data.host}/${route}/${methodMetaData?.tags?.join?.('_') ?? ''}/${methodType}${apiPath.split(/\W/)?.join('_')}`,
-                },
-                {
-                    tagName: 'host',
-                    text: data.host,
-                },
+                ...tagsCreator({ data, route, apiPath, methodType, methodMetaData }),
             ],
         });
         functionDefine.addParameter({

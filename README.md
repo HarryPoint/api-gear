@@ -105,6 +105,15 @@ module.exports = () => {
             username: "xxx",
             password: "xx",
         },
+        // if you want add somme custom the tag
+        tagsCreator: () => {
+            return [
+                {
+                    tagName: 'demo',
+                    text: 'your text',
+                }
+            ]
+        }
     };
 };
 ```
@@ -209,18 +218,19 @@ export enum Users_Source {
 
 ## 配置说明
 
-| 选项名称          |                                        描述                                        |                          类型                          |                                 默认值 |
-| :---------------- | :--------------------------------------------------------------------------------: | :----------------------------------------------------: | -------------------------------------: |
-| output            |                               文件生成目录(完整路径)                               |                         string                         | path.join(process.cwd(), "./api-gear") |
-| interfaceFileName |                                  类型定义文件名称                                  |                         string                         |                               types.ts |
-| fetchMethodPath   |                                  请求方法路径地址                                  |                         string                         |                   @/common/utils/axios |
-| fetchMethodName   |                                    请求方法名称                                    |                         string                         |                               apiFetch |
-| serviceMap        |                                   需要转换的服务                                   |             Record<string, ServiceMapItem>             |                                   null |
-| serviceNameToPath |                            是否根据服务名称添加子级目录                            |                        boolean                         |                                  false |
-| newLineKind       |                                      行尾序列                                      |                      'CRLF'\|'LF'                      |                 'LF'( --nlk=CRLF 修改) |
-| sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                        boolean                         |               false (--sort=true 修改) |
-| pathFilter        |                           过滤目标项（用于更新单个接口）                           |               (path: string) => boolean                |                             () => true |
-| auth              |                                     Bear Auth                                      | (path: string) => {username: string, password: string} |                              undefined |
+| 选项名称          |                                        描述                                        |                                                                 类型                                                                  |                                 默认值 |
+| :---------------- | :--------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: | -------------------------------------: |
+| output            |                               文件生成目录(完整路径)                               |                                                                string                                                                 | path.join(process.cwd(), "./api-gear") |
+| interfaceFileName |                                  类型定义文件名称                                  |                                                                string                                                                 |                               types.ts |
+| fetchMethodPath   |                                  请求方法路径地址                                  |                                                                string                                                                 |                   @/common/utils/axios |
+| fetchMethodName   |                                    请求方法名称                                    |                                                                string                                                                 |                               apiFetch |
+| serviceMap        |                                   需要转换的服务                                   |                                                    Record<string, ServiceMapItem>                                                     |                                   null |
+| serviceNameToPath |                            是否根据服务名称添加子级目录                            |                                                                boolean                                                                |                                  false |
+| newLineKind       |                                      行尾序列                                      |                                                             'CRLF'\|'LF'                                                              |                 'LF'( --nlk=CRLF 修改) |
+| sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                                                boolean                                                                |               false (--sort=true 修改) |
+| pathFilter        |                           过滤目标项（用于更新单个接口）                           |                                                       (path: string) => boolean                                                       |                             () => true |
+| auth              |                                     Bear Auth                                      |                                        (path: string) => {username: string, password: string}                                         |                              undefined |
+| tagsCreator       |                                     自定义tags                                     | (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[]; |                               () => [] |
 
 ## 类型
 ```typescript jsx
