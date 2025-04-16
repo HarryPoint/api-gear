@@ -72,6 +72,9 @@ export async function generator(options: {
 
     function typeWriterFnCreator(propertiesValue: any): WriterFunction {
         return (writer) => {
+            if (propertiesValue['x-nullable']) {
+                writer.write('null |');
+            }
             if (propertiesValue.allOf) {
                 propertiesValue.allOf.forEach((item: any, index: number) => {
                     writer.write(`${index !== 0 ? '&' : ''}`);
