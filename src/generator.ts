@@ -2,7 +2,7 @@ import { CodeBlockWriter, SourceFile, WriterFunction } from 'ts-morph';
 import _ from 'lodash';
 
 type IParametersItem = {
-    in: 'body' | 'query' | 'path';
+    in: 'body' | 'query' | 'path' | 'header';
     name: string;
     required: boolean;
     description: string;
@@ -188,6 +188,21 @@ export async function generator(options: {
                         }
                         writer.write('data:');
                         typeWriterFnCreator(bodyArr[0])(writer);
+                        keyCount++;
+                    }
+                }
+                // header
+                {
+                    const headerArr = methodMetaData.parameters?.filter((item: IParametersItem) => item.in === 'header') ?? [];
+                    if (headerArr.length) {
+                        if (keyCount) {
+                            writer.write(',');
+                        }
+                        writer.write('headers:');
+                        objectWriter<IParametersItem>(headerArr, (writer, item) => {
+                            writer.write(`${formatPropertyName(item.name)}${item.required ? '' : '?'}: `);
+                            typeWriterFnCreator(item)(writer);
+                        })(writer);
                         keyCount++;
                     }
                 }
