@@ -1,6 +1,6 @@
 const path = require('path');
 const argv = require('yargs').argv;
-const data = require('./FeHelper-20250427121206.json');
+const data = require('./demo.json');
 
 const platformMap = {
     sit: 'https://sit-phv-admin-service.fms-sit.lylo.tech',
