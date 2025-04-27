@@ -48,14 +48,29 @@ module.exports = () => {
                 text: 'lumesdfsdfns',
             },
         ],
-        // beforeSaveHook: async ({ sourceFile, mode, data }) => {
-        //     if (mode === 'method' && Object.keys(data?.paths ?? {}).includes('/api/phv-admin/rental-application/tenure-coin/list')) {
-        //         const functions = sourceFile.getFunction('GET');
-        //         if (functions) {
-        //             const par = functions.getParameters(0);
-        //             console.log('par', par);
-        //         }
-        //     }
-        // },
+        beforeSaveHook: async ({ sourceFile, mode, data }) => {
+            if (mode === 'method') {
+                const getFunction = sourceFile.getFunction('GET');
+                if (getFunction) {
+                    const optionsParam = getFunction.getParameter('options');
+                    if (optionsParam) {
+                        const type = optionsParam.getType();
+                        const headersProp = type.getProperty('headers');
+                        if (headersProp) {
+                            const newType = type
+                                .getProperties()
+                                .map((prop) => {
+                                    if (prop.getName() === 'headers') {
+                                        return `${prop.getName()}?: ${prop.getTypeAtLocation(optionsParam).getText()}`;
+                                    }
+                                    return `${prop.getName()}${prop.isOptional() ? '?' : ''}: ${prop.getTypeAtLocation(optionsParam).getText()}`;
+                                })
+                                .join(', ');
+                            optionsParam.setType(`{ ${newType} }`);
+                        }
+                    }
+                }
+            }
+        },
     };
 };

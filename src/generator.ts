@@ -315,19 +315,6 @@ export async function generator(options: {
 
     await beforeSaveHook?.({ sourceFile: definitionsFile, route, data, mode });
 
-    // {
-    //     if (mode === 'method' && Object.keys(data?.paths ?? {}).includes('/api/phv-admin/rental-application/tenure-coin/list')) {
-    //         const fn = definitionsFile.getFunction('GET');
-    //         if (fn) {
-    //             const par = fn.getParameter('options');
-    //             const hd = par?.getType().getProperty('headers');
-    //             const hdAli = hd?.getImmediatelyAliasedSymbol();
-
-    //             console.log('par', hdAli);
-    //         }
-    //     }
-    // }
-
     definitionsFile.formatText();
     definitionsFile.saveSync();
 }
