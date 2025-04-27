@@ -47,15 +47,18 @@ function objectWriter<T = any>(metaArr: T[] | Record<string, T>, callback: (writ
     };
 }
 
+type GeneratorMode = 'all' | 'method' | 'interface';
+
 export async function generator(options: {
     definitionsFile: SourceFile;
     route?: string;
     data: any;
-    mode?: 'all' | 'method' | 'interface';
+    mode?: GeneratorMode;
     interfacePath?: string;
     fetchMethodPath?: string;
     fetchMethodName?: string;
     tagsCreator?: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[];
+    beforeSaveHook?: (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>;
 }) {
     const interfaceCollector: string[] = [];
 
@@ -68,6 +71,7 @@ export async function generator(options: {
         fetchMethodPath = '@/common/utils/axios',
         fetchMethodName = 'apiFetch',
         tagsCreator = () => [],
+        beforeSaveHook,
     } = options;
 
     function typeWriterFnCreator(propertiesValue: any): WriterFunction {
@@ -308,6 +312,21 @@ export async function generator(options: {
             });
         }
     }
+
+    await beforeSaveHook?.({ sourceFile: definitionsFile, route, data, mode });
+
+    // {
+    //     if (mode === 'method' && Object.keys(data?.paths ?? {}).includes('/api/phv-admin/rental-application/tenure-coin/list')) {
+    //         const fn = definitionsFile.getFunction('GET');
+    //         if (fn) {
+    //             const par = fn.getParameter('options');
+    //             const hd = par?.getType().getProperty('headers');
+    //             const hdAli = hd?.getImmediatelyAliasedSymbol();
+
+    //             console.log('par', hdAli);
+    //         }
+    //     }
+    // }
 
     definitionsFile.formatText();
     definitionsFile.saveSync();

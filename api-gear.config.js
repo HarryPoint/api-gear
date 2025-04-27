@@ -1,6 +1,6 @@
 const path = require('path');
 const argv = require('yargs').argv;
-const data = require('./demo.json');
+const data = require('./FeHelper-20250427121206.json');
 
 const platformMap = {
     sit: 'https://sit-phv-admin-service.fms-sit.lylo.tech',
@@ -48,5 +48,14 @@ module.exports = () => {
                 text: 'lumesdfsdfns',
             },
         ],
+        // beforeSaveHook: async ({ sourceFile, mode, data }) => {
+        //     if (mode === 'method' && Object.keys(data?.paths ?? {}).includes('/api/phv-admin/rental-application/tenure-coin/list')) {
+        //         const functions = sourceFile.getFunction('GET');
+        //         if (functions) {
+        //             const par = functions.getParameters(0);
+        //             console.log('par', par);
+        //         }
+        //     }
+        // },
     };
 };

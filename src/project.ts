@@ -29,7 +29,16 @@ export const createTsFile = async (
     const definitionsFile = project.createSourceFile(filePath, '', {
         overwrite: true,
     });
-    await generator({ definitionsFile, data, mode: 'method', interfacePath, fetchMethodPath: config.fetchMethodPath, fetchMethodName: config.fetchMethodName, tagsCreator: config.tagsCreator });
+    await generator({
+        definitionsFile,
+        data,
+        mode: 'method',
+        interfacePath,
+        fetchMethodPath: config.fetchMethodPath,
+        fetchMethodName: config.fetchMethodName,
+        tagsCreator: config.tagsCreator,
+        beforeSaveHook: config.beforeSaveHook,
+    });
     definitionsFile.saveSync();
 };
 
@@ -45,6 +54,6 @@ export const createInterfaceFile = async (config: IConfig, options: { project: P
     const definitionsFile = project.createSourceFile(filePath, '', {
         overwrite: true,
     });
-    await generator({ definitionsFile, data, mode: 'interface' });
+    await generator({ definitionsFile, data, mode: 'interface', beforeSaveHook: config.beforeSaveHook });
     definitionsFile.saveSync();
 };

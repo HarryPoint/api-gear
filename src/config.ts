@@ -20,6 +20,7 @@ export type IConfig = {
     fetchMethodPath: string;
     fetchMethodName: string;
     tagsCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[];
+    beforeSaveHook: (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>;
     // -----------
     interfacePrefix: string;
     enumPrefix: string;
@@ -53,6 +54,7 @@ export const defaultConfig: IConfig = {
     fetchMethodPath: '@/common/utils/axios',
     fetchMethodName: 'apiFetch',
     tagsCreator: () => [],
+    beforeSaveHook: async () => {},
     // ----------
     translate: false,
     translateCacheFileName: 'translateCache.json',
