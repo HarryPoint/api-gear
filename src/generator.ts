@@ -58,6 +58,7 @@ export async function generator(options: {
     fetchMethodPath?: string;
     fetchMethodName?: string;
     tagsCreator?: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[];
+    urlCreator?: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => string;
     beforeSaveHook?: (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>;
 }) {
     const interfaceCollector: string[] = [];
@@ -71,6 +72,7 @@ export async function generator(options: {
         fetchMethodPath = '@/common/utils/axios',
         fetchMethodName = 'apiFetch',
         tagsCreator = () => [],
+        urlCreator = ({ apiPath }) => apiPath,
         beforeSaveHook,
     } = options;
 
@@ -228,7 +230,7 @@ export async function generator(options: {
                 writer.write('any');
             }
             writer.write(`>({
-                url: "${apiPath}",
+                url: "${urlCreator({ data, route, apiPath, methodType, methodMetaData })}",
                 method: "${methodNameUpperCase}",
                 ...options,
             }, extraOptions)`);

@@ -230,6 +230,7 @@ export enum Users_Source {
 | pathFilter        |                           过滤目标项（用于更新单个接口）                           |                                                       (path: string) => boolean                                                       |                             () => true |
 | auth              |                                     Bear Auth                                      |                                                                 Auth                                                                  |                              undefined |
 | tagsCreator       |                                     自定义tags                                     | (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[]; |                               () => [] |
+| urlCreator        |                    自定义url路径（当你需要proxy配置时特别有用）                    |         urlCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => string;          |                 ({apiPath}) => apiPath |
 | beforeSaveHook    |                    在生成的文件保存前调用，可以用于调整文件内容                    |                      (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>                       |                         async () => {} |
 
 ## 类型
