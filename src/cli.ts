@@ -45,12 +45,12 @@ function cleanOptions(options: any): IConfig[] {
     }
     delete ret.type;
     // 配置重置
-    if (ret.target) {
-        ret.output = path.join(process.cwd(), ret.target);
+    if (ret.output) {
+        ret.output = path.join(process.cwd(), ret.output);
     }
     delete ret.target;
     const mergeConfigArr = configDataArr.map((baseConfig) => {
-        return merge({}, defaultConfig, ret, baseConfig);
+        return merge({}, defaultConfig, baseConfig, ret);
     });
 
     for (let index = 0; index < mergeConfigArr.length; index++) {
@@ -83,9 +83,9 @@ cli.option('--config <string>', `[string] config file path (default: "api-gear.c
     //   "--type <string>",
     //   `["transform" | "clear"] chose work mode, transform will generate ts/json file, clear will clear the data file(default: transform)`
     // )
-    .option('--platform <string>', `[string] if the options is set, the other platform will be ignored`)
+    // .option('--platform <string>', `[string] if the options is set, the other platform will be ignored`)
     .option('--filter <string>', `[string] if the options is set, the other api path will be ignored`)
-    .option('--target <string>', `[string] if the options is set, the transform dir will be change`);
+    .option('--output <string>', `[string] if the options is set, the transform dir will be change`);
 
 cli.command('[root]', 'transform swagger api to ts file').action(async (root: string, options: IConfig) => {
     const cleanOpts = cleanOptions(options);

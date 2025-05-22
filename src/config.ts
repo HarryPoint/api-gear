@@ -83,7 +83,7 @@ export const defaultConfig: IConfig = {
 let runTimeConfig = defaultConfig;
 
 export const setRunTimeConfig = (config: Partial<IConfig>) => {
-    runTimeConfig = { ...runTimeConfig, ...config };
+    runTimeConfig = { ...defaultConfig, ...config };
 };
 
 export const getRunTimeConfig = () => {
