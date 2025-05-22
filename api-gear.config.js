@@ -24,53 +24,53 @@ const apiMap = Object.keys(platformMap)
 
 module.exports = () => {
     console.log('argv.platform: ', argv.platform, apiMap.dev);
-    return {
-        output: path.resolve(__dirname, './openapi'),
-        // serviceMap: apiMap.sit,
-        serviceMap: {
-            'admin-portal': {
+    return [
+        {
+            output: path.resolve(__dirname, './openapi'),
+            // serviceMap: apiMap.sit,
+            source: {
                 data,
             },
-        },
-        createJsonFile: true,
-        interfaceFileName: 'typesssss.ts',
-        fetchMethodPath: '@/fetchMethodPath',
-        fetchMethodName: 'fetchMethodName',
-        translate: true,
-        sort: true,
-        auth: {
-            username: 'lumens',
-            password: 'fmsservice',
-        },
-        tagsCreator: () => [
-            {
-                tagName: 'authorlalal',
-                text: 'lumesdfsdfns',
+            createJsonFile: true,
+            interfaceFileName: 'typesssss.ts',
+            fetchMethodPath: '@/fetchMethodPath',
+            fetchMethodName: 'fetchMethodName',
+            translate: true,
+            sort: true,
+            auth: {
+                username: 'lumens',
+                password: 'fmsservice',
             },
-        ],
-        beforeSaveHook: async ({ sourceFile, mode, data }) => {
-            if (mode === 'method') {
-                const getFunction = sourceFile.getFunction('GET');
-                if (getFunction) {
-                    const optionsParam = getFunction.getParameter('options');
-                    if (optionsParam) {
-                        const type = optionsParam.getType();
-                        const headersProp = type.getProperty('headers');
-                        if (headersProp) {
-                            const newType = type
-                                .getProperties()
-                                .map((prop) => {
-                                    if (prop.getName() === 'headers') {
-                                        return `${prop.getName()}?: ${prop.getTypeAtLocation(optionsParam).getText()}`;
-                                    }
-                                    return `${prop.getName()}${prop.isOptional() ? '?' : ''}: ${prop.getTypeAtLocation(optionsParam).getText()}`;
-                                })
-                                .join(', ');
-                            optionsParam.setType(`{ ${newType} }`);
+            tagsCreator: () => [
+                {
+                    tagName: 'authorlalal',
+                    text: 'lumesdfsdfns',
+                },
+            ],
+            beforeSaveHook: async ({ sourceFile, mode, data }) => {
+                if (mode === 'method') {
+                    const getFunction = sourceFile.getFunction('GET');
+                    if (getFunction) {
+                        const optionsParam = getFunction.getParameter('options');
+                        if (optionsParam) {
+                            const type = optionsParam.getType();
+                            const headersProp = type.getProperty('headers');
+                            if (headersProp) {
+                                const newType = type
+                                    .getProperties()
+                                    .map((prop) => {
+                                        if (prop.getName() === 'headers') {
+                                            return `${prop.getName()}?: ${prop.getTypeAtLocation(optionsParam).getText()}`;
+                                        }
+                                        return `${prop.getName()}${prop.isOptional() ? '?' : ''}: ${prop.getTypeAtLocation(optionsParam).getText()}`;
+                                    })
+                                    .join(', ');
+                                optionsParam.setType(`{ ${newType} }`);
+                            }
                         }
                     }
                 }
-            }
+            },
         },
-    };
+    ];
 };

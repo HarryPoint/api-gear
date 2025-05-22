@@ -31,7 +31,7 @@ export type IConfig = {
     translateAppSecret: string;
     translateChunkSize: number;
     transform: boolean;
-    serviceMap: Record<string, ServiceMapItem>;
+    source: ServiceMapItem;
     serviceNameToPath: boolean;
     output: string;
     createTsFile: boolean;
@@ -65,7 +65,7 @@ export const defaultConfig: IConfig = {
     transform: false,
     interfacePrefix: 'I',
     enumPrefix: 'E',
-    serviceMap: {},
+    source: {},
     serviceNameToPath: false,
     createTsFile: true,
     createJsonFile: false,

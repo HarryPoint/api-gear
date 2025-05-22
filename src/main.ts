@@ -46,12 +46,12 @@ const fetchData = async (
 ) => {
     let { apiUri, prefix, project, data: configData, auth } = options;
     if (!(apiUri || configData)) {
-        throw new Error('serviceMap config error');
+        throw new Error('source config error');
     }
     log.info('step1: fetch data');
     if (!configData) {
         const { data: originData } = await axios.get(`${apiUri}`, {
-            auth: auth ?? config.auth,
+            auth,
         });
         configData = originData;
     }
@@ -135,25 +135,20 @@ export const main = async (org_config: IConfig) => {
     setRunTimeConfig(org_config);
     let config = getRunTimeConfig();
     const project = await createProject(config);
-    // if (config.transform || config.clearJsonFile) {
-    //   return transform(config, project, config.output);
-    // }
-    for (const key in config.serviceMap) {
-        const serviceMapElement = config.serviceMap[key as keyof typeof config.serviceMap];
-        let serviceMapItem: ServiceMapItem;
-        if (typeof serviceMapElement === 'string') {
-            serviceMapItem = {
-                url: serviceMapElement,
-            };
-        } else {
-            serviceMapItem = serviceMapElement;
-        }
-        await fetchData(config, {
-            project,
-            apiUri: serviceMapItem?.url,
-            data: serviceMapItem?.data,
-            auth: serviceMapItem?.auth,
-            prefix: config.serviceNameToPath ? key : './',
-        });
+    const serviceMapElement = config.source;
+    let serviceMapItem: ServiceMapItem;
+    if (typeof serviceMapElement === 'string') {
+        serviceMapItem = {
+            url: serviceMapElement,
+        };
+    } else {
+        serviceMapItem = serviceMapElement;
     }
+    await fetchData(config, {
+        project,
+        apiUri: serviceMapItem?.url,
+        data: serviceMapItem?.data,
+        auth: serviceMapItem?.auth,
+        prefix: './',
+    });
 };

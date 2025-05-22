@@ -59,62 +59,62 @@ npm install api-gear -D
 const path = require("path");
 
 module.exports = () => {
-    return {
-        output: path.resolve(__dirname, "./autoApi"),
-        serviceMap: {
+    return [
+        {
+            output: path.resolve(__dirname, "./autoApi"),
             // 直接放链接地址
-            yourServiceName: "your api path", // XXX/swagger/doc.json (json)
-            // 对象配置方法
-            yourServiceName2: {
-                url: "your api path",
+            source: "your api path", // XXX/swagger/doc.json (json)
+            // // 对象配置方法
+            // source: {
+            //     url: "your api path",
+            // },
+            // // 直接放swagger数据
+            // source: {
+            //     data: {
+            //         "paths": {
+            //             "/v1/attachment": {
+            //                 "post": {
+            //                     "summary": "创建 Attachment",
+            //                     "deprecated": false,
+            //                     "description": "创建 Attachment",
+            //                 }
+            //             }
+            //         }
+            //         // ...
+            //     }
+            // },
+            // // 直接放函数
+            // source: {
+            //     data: async () => {
+            //         return {
+            //             "paths": {
+            //                 "/v1/attachment": {
+            //                     "post": {
+            //                         "summary": "创建 Attachment",
+            //                         "deprecated": false,
+            //                         "description": "创建 Attachment",
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            // if you need auth
+            auth: {
+                username: "xxx",
+                password: "xx",
             },
-            // 直接放swagger数据
-            yourServiceName3: {
-                data: {
-                    "paths": {
-                        "/v1/attachment": {
-                            "post": {
-                                "summary": "创建 Attachment",
-                                "deprecated": false,
-                                "description": "创建 Attachment",
-                            }
-                        }
+            // if you want add somme custom the tag
+            tagsCreator: () => {
+                return [
+                    {
+                        tagName: 'demo',
+                        text: 'your text',
                     }
-                    // ...
-                }
-            },
-            // 直接放函数
-            yourServiceName3: {
-                data: async () => {
-                    return {
-                        "paths": {
-                            "/v1/attachment": {
-                                "post": {
-                                    "summary": "创建 Attachment",
-                                    "deprecated": false,
-                                    "description": "创建 Attachment",
-                                }
-                            }
-                        }
-                    }
-                }
+                ]
             }
-        },
-        // if you need auth
-        auth: {
-            username: "xxx",
-            password: "xx",
-        },
-        // if you want add somme custom the tag
-        tagsCreator: () => {
-            return [
-                {
-                    tagName: 'demo',
-                    text: 'your text',
-                }
-            ]
         }
-    };
+    ];
 };
 ```
 
@@ -158,7 +158,7 @@ npm run api
 ```javascript
 // file:  src/autoApi/api/v1/product/index.ts
 import { apiFetch } from "@/common/utils/axios";
-import { Rest_Response_Dto_PaginationResponse_Ent_Products, Ent_Products, Rest_Response_Ent_Products } from "@/autoApi/types";
+import { Rest_Response_Dto_PaginationResponse_Ent_Products, Ent_Products, Rest_Response_Ent_Products } from "../../types";
 
 /**
  * 获取 Product 列表
@@ -224,12 +224,11 @@ export enum Users_Source {
 | interfaceFileName |                                  类型定义文件名称                                  |                                                                string                                                                 |                               types.ts |
 | fetchMethodPath   |                                  请求方法路径地址                                  |                                                                string                                                                 |                   @/common/utils/axios |
 | fetchMethodName   |                                    请求方法名称                                    |                                                                string                                                                 |                               apiFetch |
-| serviceMap        |                                   需要转换的服务                                   |                                                    Record<string, ServiceMapItem>                                                     |                                   null |
-| serviceNameToPath |                            是否根据服务名称添加子级目录                            |                                                                boolean                                                                |                                  false |
+| source            |                                       数据源                                       |                                                            ServiceMapItem                                                             |                                   null |
 | newLineKind       |                                      行尾序列                                      |                                                             'CRLF'\|'LF'                                                              |                 'LF'( --nlk=CRLF 修改) |
 | sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                                                boolean                                                                |               false (--sort=true 修改) |
 | pathFilter        |                           过滤目标项（用于更新单个接口）                           |                                                       (path: string) => boolean                                                       |                             () => true |
-| auth              |                                     Bear Auth                                      |                                        (path: string) => {username: string, password: string}                                         |                              undefined |
+| auth              |                                     Bear Auth                                      |                                                                 Auth                                                                  |                              undefined |
 | tagsCreator       |                                     自定义tags                                     | (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[]; |                               () => [] |
 | beforeSaveHook    |                    在生成的文件保存前调用，可以用于调整文件内容                    |                      (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>                       |                         async () => {} |
 
