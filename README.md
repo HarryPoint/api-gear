@@ -70,6 +70,11 @@ module.exports = () => {
             // // 对象配置方法
             // source: {
             //     url: "your api path",
+            // // if you need auth
+            //     auth: {
+            //         username: "xxx",
+            //         password: "xx",
+            //     },
             // },
             // // 直接放swagger数据
             // source: {
@@ -101,12 +106,7 @@ module.exports = () => {
             //             }
             //         }
             //     }
-            // }
-            // if you need auth
-            auth: {
-                username: "xxx",
-                password: "xx",
-            },
+            // }           
             // if you want add somme custom the tag
             tagsCreator: () => {
                 return [
@@ -231,7 +231,7 @@ export enum Users_Source {
 | newLineKind       |                                      行尾序列                                      |                                                             'CRLF'\|'LF'                                                              |                 'LF'( --nlk=CRLF 修改) |
 | sort              | 生成interface时，对成员名称排序(数据内容key顺序不稳定，开启可以防止无效的文件变更) |                                                                boolean                                                                |               false (--sort=true 修改) |
 | pathFilter        |                           过滤目标项（用于更新单个接口）                           |                                                       (path: string) => boolean                                                       |                             () => true |
-| auth              |                                     Bear Auth                                      |                                                                 Auth                                                                  |                              undefined |
+| source.auth       |                                     Bear Auth                                      |                                                                 Auth                                                                  |                              undefined |
 | tagsCreator       |                                     自定义tags                                     | (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[]; |                               () => [] |
 | urlCreator        |                    自定义url路径（当你需要proxy配置时特别有用）                    |         urlCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => string;          |                 ({apiPath}) => apiPath |
 | beforeSaveHook    |                    在生成的文件保存前调用，可以用于调整文件内容                    |                      (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>                       |                         async () => {} |
