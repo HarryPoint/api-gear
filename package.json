@@ -1,65 +1,67 @@
 {
-  "name": "api-gear",
-  "version": "2.0.6",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "src": "ts-node ./src/cli.ts",
-    "local": "ts-node ./src/local_test.ts",
-    "morph": "ts-node ./morph_demo/morph.ts",
-    "build": "tsc -d",
-    "sync": "open https://npmmirror.com/package/api-gear"
-  },
-  "repository": "git+https://github.com/HarryPoint/api-gear.git",
-  "bugs": {
-    "url": "https://github.com/HarryPoint/api-gear/issues"
-  },
-  "homepage": "https://github.com/HarryPoint/api-gear#readme",
-  "keywords": [
-    "Swagger",
-    "typescript",
-    "api-gear",
-    "Swagger2",
-    "code generation",
-    "code refactor",
-    "TS",
-    "interface",
-    "fetch",
-    "axios"
-  ],
-  "author": "harry",
-  "license": "MIT",
-  "bin": {
-    "api-gear": "./bin/api-gear.js"
-  },
-  "files": [
-    "bin",
-    "lib",
-    "README.md",
-    "README.zh-CN.md"
-  ],
-  "dependencies": {
-    "axios": "^1.6.7",
-    "bundle-require": "^5.1.0",
-    "cac": "^6.7.14",
-    "chalk": "^5.4.1",
-    "cli-progress": "^3.12.0",
-    "crypto-js": "^4.2.0",
-    "joycon": "^3.1.1",
-    "lodash": "^4.17.21",
-    "qs": "^6.11.2",
-    "strip-json-comments": "^5.0.2",
-    "ts-morph": "^20.0.0",
-    "yargs": "^17.7.2"
-  },
-  "devDependencies": {
-    "@types/cli-progress": "^3.11.6",
-    "@types/crypto-js": "^4.2.2",
-    "@types/lodash": "^4.14.202",
-    "@types/lodash-es": "^4.17.12",
-    "@types/node": "^20.11.15",
-    "@types/qs": "^6.9.11",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
-  }
+    "name": "api-gear",
+    "version": "2.0.6",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "src": "ts-node ./src/cli.ts",
+        "dist": "node ./dist/cli.js",
+        "local": "ts-node ./src/local_test.ts",
+        "morph": "ts-node ./morph_demo/morph.ts",
+        "build": "tsup src/cli.ts src/index.ts --clean --splitting",
+        "sync": "open https://npmmirror.com/package/api-gear"
+    },
+    "repository": "git+https://github.com/HarryPoint/api-gear.git",
+    "bugs": {
+        "url": "https://github.com/HarryPoint/api-gear/issues"
+    },
+    "homepage": "https://github.com/HarryPoint/api-gear#readme",
+    "keywords": [
+        "Swagger",
+        "typescript",
+        "api-gear",
+        "Swagger2",
+        "code generation",
+        "code refactor",
+        "TS",
+        "interface",
+        "fetch",
+        "axios"
+    ],
+    "author": "harry",
+    "license": "MIT",
+    "bin": {
+        "api-gear": "./dist/cli.js"
+    },
+    "files": [
+        "bin",
+        "lib",
+        "README.md",
+        "README.zh-CN.md"
+    ],
+    "dependencies": {
+        "axios": "^1.6.7",
+        "bundle-require": "^5.1.0",
+        "cac": "^6.7.14",
+        "chalk": "^5.4.1",
+        "cli-progress": "^3.12.0",
+        "crypto-js": "^4.2.0",
+        "joycon": "^3.1.1",
+        "lodash": "^4.17.21",
+        "qs": "^6.11.2",
+        "ts-morph": "^20.0.0",
+        "yargs": "^17.7.2"
+    },
+    "devDependencies": {
+        "@types/cli-progress": "^3.11.6",
+        "@types/crypto-js": "^4.2.2",
+        "@types/lodash": "^4.14.202",
+        "@types/lodash-es": "^4.17.12",
+        "@types/node": "^20.11.15",
+        "@types/qs": "^6.9.11",
+        "strip-json-comments": "^5.0.2",
+        "ts-node": "^10.9.2",
+        "tsup": "^8.5.0",
+        "typescript": "^5.3.3"
+    }
 }
