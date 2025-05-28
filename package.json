@@ -1,6 +1,6 @@
 {
     "name": "api-gear",
-    "version": "2.0.8-beta.1",
+    "version": "2.0.8",
     "description": "",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
