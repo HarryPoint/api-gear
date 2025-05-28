@@ -1,6 +1,6 @@
 {
     "name": "api-gear",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -9,7 +9,8 @@
         "local": "ts-node ./src/local_test.ts",
         "morph": "ts-node ./morph_demo/morph.ts",
         "build": "tsup src/cli.ts src/index.ts --clean --splitting",
-        "sync": "open https://npmmirror.com/package/api-gear"
+        "sync": "open https://npmmirror.com/package/api-gear",
+        "release": "bumpp"
     },
     "repository": "git+https://github.com/HarryPoint/api-gear.git",
     "bugs": {
@@ -59,6 +60,7 @@
         "@types/lodash-es": "^4.17.12",
         "@types/node": "^20.11.15",
         "@types/qs": "^6.9.11",
+        "bumpp": "^10.1.1",
         "strip-json-comments": "^5.0.2",
         "ts-node": "^10.9.2",
         "tsup": "^8.5.0",
