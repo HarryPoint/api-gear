@@ -251,7 +251,7 @@ export async function generator(options: {
                             name: formatPropertyName(propertiesKey),
                             type: typeWriterFnCreator(propertiesValue),
                             // trailingTrivia: propertiesValue.description,
-                            leadingTrivia: `/** ${propertiesValue.description} */\n`,
+                            leadingTrivia: propertiesValue.description ? `/** ${propertiesValue.description} */\n` : '',
                             hasQuestionToken: !propertiesValue.required?.includes(propertiesKey),
                         });
                     }
@@ -272,9 +272,28 @@ export async function generator(options: {
                     }
                     return;
                 }
-                console.log('metaData', metaData);
+                const stringType = definitionsFile.addTypeAlias({
+                    isExported,
+                    name,
+                    type: (writer) => {
+                        writer.write('string');
+                    },
+                });
+                if (metaData?.pattern) {
+                    stringType.addJsDoc(metaData?.pattern);
+                } else {
+                    console.log('metaData', metaData);
+                }
                 return;
             default:
+                const defaultType = definitionsFile.addTypeAlias({
+                    isExported,
+                    name,
+                    type: (writer) => {
+                        writer.write(metaData.type);
+                    },
+                });
+                defaultType.addJsDoc('Maybe need api-gear support. https://www.npmjs.com/package/api-gear');
                 console.log('miss metaData.type', metaData.type);
         }
     }
