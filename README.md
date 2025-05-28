@@ -234,6 +234,7 @@ export enum Users_Source {
 | source.auth       |                                     Bear Auth                                      |                                                                 Auth                                                                  |                              undefined |
 | tagsCreator       |                                     自定义tags                                     | (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[]; |                               () => [] |
 | urlCreator        |                    自定义url路径（当你需要proxy配置时特别有用）                    |         urlCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => string;          |                 ({apiPath}) => apiPath |
+| transformDataHook |             在获取的swagger数据用于代码生成前调用，可以用于元数据调整              |                                            transformDataHook: (data: any) => Promise<any>;                                            |                        (data) => data, |
 | beforeSaveHook    |                    在生成的文件保存前调用，可以用于调整文件内容                    |                      (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>                       |                         async () => {} |
 
 ## 类型

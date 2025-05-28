@@ -21,6 +21,7 @@ export type IConfig = {
     fetchMethodName: string;
     tagsCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => { tagName: string; text: string }[];
     urlCreator: (arg: { data: any; route: string; apiPath: string; methodType: string; methodMetaData: any }) => string;
+    transformDataHook: (data: any) => Promise<any>;
     beforeSaveHook: (arg: { sourceFile: SourceFile; route: string; data: any; mode: string }) => Promise<void>;
     // -----------
     interfacePrefix: string;
@@ -56,6 +57,7 @@ export const defaultConfig: IConfig = {
     fetchMethodName: 'apiFetch',
     tagsCreator: () => [],
     urlCreator: ({ apiPath }) => apiPath,
+    transformDataHook: (data) => data,
     beforeSaveHook: async () => {},
     // ----------
     translate: false,
