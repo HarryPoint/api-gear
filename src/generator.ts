@@ -177,7 +177,8 @@ export async function generator(options: {
                         if (keyCount) {
                             writer.write(',');
                         }
-                        writer.write('params:');
+                        const required = queryArr?.some((item: any) => item.required === true);
+                        writer.write(`params${required ? '' : '?'}:`);
                         objectWriter<IParametersItem>(queryArr, (writer, item) => {
                             writer.write(`${formatPropertyName(item.name)}${item.required ? '' : '?'}: `);
                             typeWriterFnCreator(item)(writer);
@@ -204,7 +205,8 @@ export async function generator(options: {
                         if (keyCount) {
                             writer.write(',');
                         }
-                        writer.write('headers:');
+                        const required = headerArr?.some((item: any) => item.required === true);
+                        writer.write(`headers${required ? '' : '?'}:`);
                         objectWriter<IParametersItem>(headerArr, (writer, item) => {
                             writer.write(`${formatPropertyName(item.name)}${item.required ? '' : '?'}: `);
                             typeWriterFnCreator(item)(writer);
