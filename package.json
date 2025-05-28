@@ -1,8 +1,9 @@
 {
     "name": "api-gear",
-    "version": "2.0.7",
+    "version": "2.0.8-beta.1",
     "description": "",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "src": "ts-node ./src/cli.ts",
         "dist": "node ./dist/cli.js",
@@ -35,10 +36,7 @@
         "api-gear": "./dist/cli.js"
     },
     "files": [
-        "bin",
-        "lib",
-        "README.md",
-        "README.zh-CN.md"
+        "/dist"
     ],
     "dependencies": {
         "axios": "^1.6.7",
