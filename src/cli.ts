@@ -3,27 +3,18 @@ import { version } from '../package.json';
 import { IConfig, defaultConfig } from './config';
 import { main } from './main';
 import path from 'path';
-import fs from 'fs';
 import { merge } from 'lodash';
+import { loadConfig } from './load';
 
 const cli = cac('api-gear');
 
 /**
  * removing global flags before passing as command specific sub-configs
  */
-function cleanOptions(options: any): IConfig[] {
+async function cleanOptions(options: any) {
     const ret = { ...options };
-    const configPath = path.join(process.cwd(), ret.config || 'api-gear.config.js');
-    let configFn = (config: IConfig, argv: any) => [config];
-    if (fs.existsSync(configPath)) {
-        configFn = require(configPath);
-    }
-
-    let configDataArr: Partial<IConfig>[] = [];
-
-    if (typeof configFn === 'function') {
-        configDataArr = configFn(defaultConfig, options) as Partial<IConfig>[];
-    }
+    let configFn = await loadConfig(process.cwd());
+    let configDataArr = await configFn(defaultConfig, options);
     delete ret['--'];
     ret.translate && (ret.translate = ret.translate === 'true');
     ret.json && (ret.createJsonFile = ret.json === 'true');
@@ -88,7 +79,7 @@ cli.option('--config <string>', `[string] config file path (default: "api-gear.c
     .option('--output <string>', `[string] if the options is set, the transform dir will be change`);
 
 cli.command('[root]', 'transform swagger api to ts file').action(async (root: string, options: IConfig) => {
-    const cleanOpts = cleanOptions(options);
+    const cleanOpts = await cleanOptions(options);
     try {
         for (let index = 0; index < cleanOpts.length; index++) {
             const element = cleanOpts[index];
