@@ -17,7 +17,7 @@
   - [主要特性](#主要特性)
   - [快速开始](#快速开始)
     - [安装](#安装)
-    - [在项目根目录添加配置文件 `api-gear.config.js`](#在项目根目录添加配置文件-api-gearconfigjs)
+    - [在项目根目录添加配置文件](#在项目根目录添加配置文件)
     - [编写`apiFetch`方法](#编写apifetch方法)
     - [在项目内的`package.json`中配置命令](#在项目内的packagejson中配置命令)
     - [运行命令， 生成接口类型定义](#运行命令-生成接口类型定义)
@@ -54,13 +54,15 @@
 npm install api-gear -D
 ```
 
-### 在项目根目录添加配置文件 `api-gear.config.js`
+### 在项目根目录添加配置文件
 
 ```javascript
-// file: api-gear.config.js
-const path = require("path");
+// file: api-gear.config.ts
+import path from 'path';
+import { defineConfig } from "api-gear";
 
-module.exports = () => {
+// 注意此处为 async 函数
+export default defineConfig(async() => {
     // 可以配置多个
     return [
         {
@@ -118,7 +120,7 @@ module.exports = () => {
             }
         }
     ];
-};
+});
 ```
 
 ### 编写`apiFetch`方法
